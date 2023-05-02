@@ -13,12 +13,24 @@
       "problemMatcher": []
     },
     {
+      "type": "shell",
+      "label": "azurite start",
+      "command": "npm run azurite",
+      "problemMatcher": "$func-node-watch"
+    },
+    {
       "type": "func",
-      "label": "func: start",
-      "command": "npm run dev",
+      "label": "func start",
+      "command": "host start",
       "problemMatcher": "$func-node-watch",
-      "isBackground": true,
       "dependsOn": "npm install (functions)"
+    },
+    {
+      "label": "app start",
+      "dependsOn": ["func start", "azurite start"],
+      "dependsOrder": "parallel",
+      "problemMatcher": "$func-node-watch",
+      "isBackground": true
     }
   ]
 }
