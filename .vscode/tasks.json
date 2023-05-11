@@ -8,6 +8,13 @@
     },
     {
       "type": "shell",
+      "label": "npm build (functions)",
+      "command": "npm run build",
+      "dependsOn": "npm install (functions)",
+      "problemMatcher": "$tsc"
+    },
+    {
+      "type": "shell",
       "label": "npm prune (functions)",
       "command": "npm prune --production",
       "problemMatcher": []

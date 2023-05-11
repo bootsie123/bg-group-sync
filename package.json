@@ -2,32 +2,26 @@
   "name": "bg-group-sync",
   "version": "1.0.0",
   "description": "An automated tool to sync Blackbaud community groups with Google Groups",
-  "main": "src/functions/*",
+  "main": "dist/src/functions/*",
   "scripts": {
     "start": "npm run functions",
-    "dev": "concurrently -r \"npm:functions\" \"npm:azurite\"",
-    "dev:verbose": "concurrently -r \"npm:functions:verbse\" \"npm:azurite\"",
-    "watch": "npm-watch",
+    "prestart": "npm run build",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "watch:dev": "concurrently -r npm:watch npm:dev",
+    "watch:dev:verbose": "concurrently -r npm:watch npm:dev:verbose",
+    "dev": "concurrently -r npm:functions npm:azurite",
+    "dev:verbose": "concurrently -r npm:functions:verbse npm:azurite",
     "functions": "func start",
     "functions:verbose": "func start --verbose",
     "azurite": "azurite -s -l ./.azurite -L",
-    "lint": "eslint . --ext .mjs"
+    "lint": "eslint ."
   },
   "author": {
     "name": "John Arrandale"
   },
   "repository": {
     "url": "https://github.com/bootsie123/bg-group-sync"
-  },
-  "watch": {
-    "dev": {
-      "patterns": [
-        "src"
-      ],
-      "extensions": "js,mjs",
-      "inherit": true,
-      "quiet": true
-    }
   },
   "dependencies": {
     "@azure/functions": "^4.0.0-alpha.7",
@@ -38,13 +32,17 @@
     "simple-oauth2": "^5.0.0"
   },
   "devDependencies": {
+    "@types/node": "^18.16.3",
+    "@typescript-eslint/eslint-plugin": "^5.59.2",
+    "@typescript-eslint/parser": "^5.59.2",
     "azure-functions-core-tools": "^4.0.5095",
     "azurite": "^3.23.0",
     "concurrently": "^8.0.1",
     "eslint": "^8.38.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.8.0",
-    "npm-watch": "^0.11.0",
-    "prettier": "^2.8.7"
+    "eslint-plugin-jsdoc": "^43.1.1",
+    "prettier": "^2.8.7",
+    "typescript": "^5.0.4"
   }
 }

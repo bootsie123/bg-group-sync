@@ -1,8 +1,8 @@
 import * as df from "durable-functions";
 
-import logger from "../lib/logger.mjs";
-import { GoogleAPI } from "../lib/google.mjs";
-import utils from "../lib/utils.mjs";
+import logger from "../../lib/logger.mjs";
+import { GoogleAPI } from "../../lib/google.mjs";
+import utils from "../../lib/utils.mjs";
 
 const entity = new df.EntityId("googleAuthEntity", "auth");
 
@@ -35,7 +35,7 @@ df.app.activity("googleUpdateGroup", {
       } catch (err) {
         const data = err.response.data;
 
-        const errors = data.error.errors.map((error) => error.message);
+        const errors = data.error.errors.map(error => error.message);
 
         log(
           "error",
@@ -55,7 +55,7 @@ df.app.activity("googleUpdateGroup", {
 
       if (!data.members) continue;
 
-      const members = data.members.map((member) =>
+      const members = data.members.map(member =>
         utils.sanitizeEmail(member.email)
       );
 
@@ -96,7 +96,7 @@ df.app.activity("googleUpdateGroup", {
       } catch (err) {
         const data = err.response.data;
 
-        const errors = data.error.errors.map((error) => error.message);
+        const errors = data.error.errors.map(error => error.message);
 
         log(
           "error",
@@ -133,7 +133,7 @@ df.app.activity("googleUpdateGroup", {
       } catch (err) {
         const data = err.response.data;
 
-        const errors = data.error.errors.map((error) => error.message);
+        const errors = data.error.errors.map(error => error.message);
 
         log(
           "error",

@@ -1,0 +1,11 @@
+# Dependency directories
+node_modules
+
+# Typescript output
+dist
+
+# Azurite artifacts
+.azurite
+__blobstorage__
+__queuestorage__
+__azurite_db*__.json
