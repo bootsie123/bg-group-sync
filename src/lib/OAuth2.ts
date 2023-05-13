@@ -17,7 +17,16 @@ const authConfig = {
   }
 };
 
-export const client: AuthorizationCode = new AuthorizationCode(authConfig);
+const client = new AuthorizationCode(authConfig);
+
+/**
+ * Creates a new {@link AccessToken} using a conforming RFC6750 token object
+ * @param token A token object conforming to the RFC6750 specification
+ * @returns An {@link AccessToken} object
+ */
+export function createToken(token: unknown) {
+  return client.createToken(token);
+}
 
 /**
  * Creates the authorization URL using the specified redirect URI
