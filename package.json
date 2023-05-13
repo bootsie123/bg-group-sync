@@ -2,7 +2,7 @@
   "name": "bg-group-sync",
   "version": "1.0.0",
   "description": "An automated tool to sync Blackbaud community groups with Google Groups",
-  "main": "dist/src/functions/*",
+  "main": "dist/functions/**/*.js",
   "scripts": {
     "start": "npm run functions",
     "prestart": "npm run build",
