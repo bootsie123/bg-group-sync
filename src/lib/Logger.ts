@@ -53,6 +53,6 @@ export class Logger {
       severity = Severity.Info;
     }
 
-    this.stream[severity](message);
+    this.stream[severity](...message);
   }
 }
