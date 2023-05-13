@@ -1,21 +1,8 @@
-const parseSyncMap = (data: string) => {
-  data = data.replace(/'/g, '"');
-
-  try {
-    return JSON.parse(data);
-  } catch (err) {
-    console.error("Failed to load sync map from settings:", err);
-
-    return {};
-  }
-};
-
 export default {
   production: process.env.NODE_ENV === "production",
   sync: {
     schedule: process.env["SYNC_SCHEDULE"] || "0 0 0 * * *",
-    scheduleEnabled: false,
-    map: parseSyncMap(process.env["SYNC_MAP"])
+    scheduleEnabled: false
   },
   blackbaud: {
     oauth: {
@@ -30,13 +17,42 @@ export default {
       subscriptionKey: process.env["BLACKBAUD_SUBSCRIPTION_KEY"]
     },
     sync: {
-      groupListId: process.env["BLACKBAUD_GROUP_LIST_ID"]
+      studentRole: process.env["BLACKBAUD_STUDENT_ROLE"] || "Student",
+      parentRole: process.env["BLACKBAUD_PARENT_ROLE"] || "Parent"
     }
   },
   google: {
     auth: {
       serviceEmail: process.env["GOOGLE_AUTH_SERVICE_EMAIL"],
       serviceKey: process.env["GOOGLE_AUTH_SERVICE_KEY"]
+    },
+    domain: process.env["GOOGLE_DOMAIN"],
+    studentGroupEmailPrefix: process.env["GOOGLE_STUDENT_GROUP_EMAIL_PREFIX"] || "students",
+    studentGroupName: process.env["GOOGLE_STUDENT_GROUP_NAME"] || "Class of ",
+    studentGroupPermissions: {
+      whoCanAdd: "ALL_MANAGERS_CAN_ADD",
+      whoCanJoin: "INVITED_CAN_JOIN",
+      whoCanViewMembership: "ALL_MANAGERS_CAN_VIEW",
+      whoCanViewGroup: "ALL_MEMBERS_CAN_VIEW",
+      whoCanInvite: "ALL_MANAGERS_CAN_INVITE",
+      whoCanPostMessage: "ALL_MEMBERS_CAN_POST",
+      whoCanLeaveGroup: "ALL_MANAGERS_CAN_LEAVE",
+      whoCanContactOwner: "ALL_MANAGERS_CAN_CONTACT",
+      whoCanDiscoverGroup: "ALL_MEMBERS_CAN_DISCOVER"
+    },
+    parentGroupEmailPrefix: process.env["GOOGLE_PARENT_GROUP_EMAIL_PREFIX"] || "parents",
+    parentGroupName: process.env["GOOGLE_PARENT_GROUP_NAME"] || "Parents of ",
+    parentGroupPermissions: {
+      whoCanAdd: "ALL_MANAGERS_CAN_ADD",
+      whoCanJoin: "INVITED_CAN_JOIN",
+      whoCanViewMembership: "ALL_MANAGERS_CAN_VIEW",
+      whoCanViewGroup: "ALL_MEMBERS_CAN_VIEW",
+      whoCanInvite: "ALL_MANAGERS_CAN_INVITE",
+      whoCanPostMessage: "ALL_MEMBERS_CAN_POST",
+      whoCanLeaveGroup: "ALL_MEMBERS_CAN_LEAVE",
+      whoCanContactOwner: "ALL_MEMBERS_CAN_CONTACT",
+      whoCanDiscoverGroup: "ALL_MEMBERS_CAN_DISCOVER",
+      allowExternalMembers: true
     }
   }
 };

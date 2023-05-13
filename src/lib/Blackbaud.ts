@@ -1,9 +1,11 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import * as df from "durable-functions";
 import { AccessToken } from "simple-oauth2";
 
 import environment from "../environment";
+
 import { Logger, LoggingStream, Severity } from "./Logger";
+import { createToken } from "./OAuth2";
 
 // Default config for Axios
 const axiosConfig = {
@@ -17,9 +19,7 @@ const axiosConfig = {
  * Additional options for the {@link BlackbaudAPI}
  */
 export interface BlackbaudAPIOptions {
-  /**
-   * Stream to use when logging
-   */
+  /** Stream to use when logging */
   loggingStream?: LoggingStream;
 }
 
@@ -59,7 +59,6 @@ export class BlackbaudAPI {
     this.logger = new Logger(options.loggingStream, "BlackbaudAPI");
 
     this.initAxiosInstance();
-    this.initAccessToken();
   }
 
   /**
@@ -67,6 +66,13 @@ export class BlackbaudAPI {
    */
   private initAxiosInstance() {
     const http = axios.create(axiosConfig);
+
+    // Injects the current access token into the Authorization header
+    http.interceptors.request.use(config => {
+      config.headers["Authorization"] = `Bearer ${this.accessToken.token.access_token}`;
+
+      return config;
+    });
 
     // Handles automatic refreshing of expired access tokens
     http.interceptors.response.use(
@@ -78,6 +84,8 @@ export class BlackbaudAPI {
 
         if (err.response.status === 401 && !originalReq._retry) {
           originalReq._retry = true;
+
+          console.log(err.response.data);
 
           this.logger.log(
             Severity.Warning,
@@ -95,7 +103,7 @@ export class BlackbaudAPI {
           }
         }
 
-        return Promise.reject(err);
+        throw err;
       }
     );
 
@@ -106,24 +114,37 @@ export class BlackbaudAPI {
    * Initializes the {@link AccessToken} used by the SKY API.
    * An error will be thrown if a Blackbaud account is not linked or the refresh token is expired.
    */
-  private async initAccessToken() {
+  public async init() {
     const entity = await this.client.readEntityState(this.entity);
 
-    const accessToken: AccessToken = entity.entityState;
+    const accessToken: AccessToken = createToken(entity.entityState);
 
     if (!accessToken) {
       throw new Error(
-        "[Blackbaud] No refresh token found! You must link a Blackbaud account before syncing"
+        "[BlackbaudAPI] No refresh token found! You must link a Blackbaud account before syncing"
       );
     }
 
     if (accessToken.expired()) {
-      throw new Error("[Blackbaud] Refresh token expired. Must relink OAuth2 account");
+      throw new Error("[BlackbaudAPI] Refresh token expired. Must relink OAuth2 account");
     }
 
-    this.logger.log(Severity.Info, "Account already linked");
-
     this.accessToken = accessToken;
+  }
+
+  /**
+   * Handles errors from Blackbaud API requests and parses the HTTP response
+   * to compile a list of error messages
+   * @param error An {@link AxiosError} recieved from a failed Axios request
+   * @returns A comma seperated list of error messages
+   */
+  private apiErrorHandler(error: AxiosError): string {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = error.response.data;
+
+    const errors = data.errors ? data.errors.map(err => err.message) : [data.message];
+
+    return errors.join(",");
   }
 
   /**
@@ -134,11 +155,7 @@ export class BlackbaudAPI {
     try {
       const accessToken: AccessToken = await this.accessToken.refresh();
 
-      this.http.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${accessToken.token.access_token}`;
-
-      this.client.signalEntity(this.entity, "set", accessToken);
+      this.client.signalEntity(this.entity, "set", accessToken.token);
 
       this.accessToken = accessToken;
 
@@ -146,24 +163,65 @@ export class BlackbaudAPI {
     } catch (err) {
       this.logger.log(Severity.Error, "Error refreshing access token:", err);
 
-      return Promise.reject(err);
+      throw err;
     }
   }
 
-  getMe() {
-    return this.http.get("users/me");
+  /**
+   * Retrieves a list of core school user roles
+   * @returns A list of user roles
+   */
+  async getRoles() {
+    try {
+      const res = await this.http.get("roles");
+
+      return res.data;
+    } catch (err) {
+      throw this.apiErrorHandler(err);
+    }
   }
 
-  getListOfLists() {
-    return this.http.get("lists");
+  /**
+   * Retrieves a list of all users with the specified roles
+   * @param roleIds An array of role IDs to match
+   * @param marker The record number to start at for the batch of data
+   * @param extended True if the extended user information should be returned
+   * @returns A list of users which have the specified roles
+   */
+  async getUsersByRoles(roleIds: number[], marker = 1, extended = false) {
+    const roles = roleIds.join(",");
+
+    try {
+      const res = await this.http.get(extended ? "users/extended" : "users", {
+        params: {
+          roles,
+          base_role_ids: roles,
+          marker
+        }
+      });
+
+      return res.data;
+    } catch (err) {
+      throw this.apiErrorHandler(err);
+    }
   }
 
-  getList(listId, page = 1, pageSize = 1000) {
-    return this.http.get(`lists/advanced/${listId}`, {
-      params: {
-        page,
-        page_size: pageSize
-      }
-    });
+  /**
+   * Updates the email address of a user to a new email
+   * @param userId The ID of the user to update the email of
+   * @param email The new email address
+   * @returns The ID of the user just updated
+   */
+  async updateUserEmail(userId: number, email: string) {
+    try {
+      const res = await this.http.patch("users", {
+        id: userId,
+        email
+      });
+
+      return res.data;
+    } catch (err) {
+      throw this.apiErrorHandler(err);
+    }
   }
 }
