@@ -12,6 +12,7 @@ import environment from "../../environment";
 export const FUNCTION_NAME = "syncOrchestrator";
 
 /**
+ * Responsible for initiating the sync tasks
  * @param context The OrchestrationContext passed to the handler
  * @returns Undefined
  */
