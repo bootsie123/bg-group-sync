@@ -141,11 +141,15 @@ export class BlackbaudAPI {
       throw new Error(notLinkedError);
     }
 
-    if (accessToken.expired()) {
+    this.accessToken = accessToken;
+
+    if (!accessToken.expired()) return;
+
+    try {
+      await this.refreshAccessToken();
+    } catch (err) {
       throw new Error("[BlackbaudAPI] Refresh token expired. Must relink OAuth2 account");
     }
-
-    this.accessToken = accessToken;
   }
 
   /**
