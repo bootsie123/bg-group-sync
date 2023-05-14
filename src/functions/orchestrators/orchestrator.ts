@@ -21,23 +21,10 @@ export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
   logger.log(Severity.Info, "Starting sync job...");
 
   try {
-    yield context.df.callActivity(blackbaudGetMe);
-
     const tasks = [];
 
-    tasks.push(
-      context.df.callSubOrchestrator(syncUsers, {
-        blackbaudRole: environment.blackbaud.sync.studentRole,
-        processor: processStudent
-      })
-    );
-
-    tasks.push(
-      context.df.callSubOrchestrator(syncUsers, {
-        blackbaudRole: environment.blackbaud.sync.parentRole,
-        processor: processParent
-      })
-    );
+    tasks.push(context.df.callSubOrchestrator(syncStudents));
+    // tasks.push(context.df.callSubOrchestrator(parentOrchestrator));
 
     yield context.df.Task.all(tasks);
   } catch (err) {
