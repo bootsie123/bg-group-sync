@@ -1,12 +1,13 @@
 {
   "name": "bg-group-sync",
   "version": "1.0.0",
-  "description": "An automated tool to sync Blackbaud community groups with Google Groups",
+  "description": "An automated tool to sync Blackbaud students and parents into Google Groups",
   "main": "dist/functions/**/*.js",
   "scripts": {
     "start": "npm run functions",
-    "prestart": "npm run build",
+    "prestart": "npm run clean && npm run build",
     "build": "tsc",
+    "clean": "rm -rf dist",
     "watch": "tsc -w",
     "watch:dev": "concurrently -r npm:watch npm:dev",
     "watch:dev:verbose": "concurrently -r npm:watch npm:dev:verbose",
