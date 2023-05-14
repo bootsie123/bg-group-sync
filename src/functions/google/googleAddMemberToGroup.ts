@@ -45,7 +45,7 @@ export async function googleAddMemberToGroup(
     if (err === "Member already exists.") return;
     else if (err.includes("Resource Not Found")) return;
 
-    logger.log(Severity.Error, err);
+    logger.log(Severity.Error, err, "\nInput Parameters:", params);
 
     throw err;
   }

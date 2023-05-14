@@ -40,7 +40,7 @@ export async function googleFindGroup(
 
     return groupList.groups[0];
   } catch (err) {
-    logger.log(Severity.Error, err);
+    logger.log(Severity.Error, err, "\nInput Parameters:", groupEmail);
 
     throw err;
   }

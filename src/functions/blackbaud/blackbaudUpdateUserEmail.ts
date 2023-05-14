@@ -37,7 +37,7 @@ export async function blackbaudUpdateUserEmail(
 
     await blackbaud.updateUserEmail(params.userId, params.email);
   } catch (err) {
-    logger.log(Severity.Error, err);
+    logger.log(Severity.Error, err, "\nInput Parameters:", params);
 
     throw err;
   }

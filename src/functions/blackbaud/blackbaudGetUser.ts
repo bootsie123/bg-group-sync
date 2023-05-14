@@ -27,7 +27,7 @@ export async function blackbaudGetUser(userId: number, context: InvocationContex
 
     return user;
   } catch (err) {
-    logger.log(Severity.Error, err);
+    logger.log(Severity.Error, err, "\nInput Parameters:", userId);
 
     throw err;
   }

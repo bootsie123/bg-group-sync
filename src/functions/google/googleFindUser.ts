@@ -40,7 +40,7 @@ export async function googleFindUser(
 
     return userList.users[0];
   } catch (err) {
-    logger.log(Severity.Error, err);
+    logger.log(Severity.Error, err, "\nInput Parameters:", fullName);
 
     throw err;
   }

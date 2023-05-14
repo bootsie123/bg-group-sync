@@ -52,7 +52,7 @@ export async function blackbaudGetUsers(
       users = users.concat(data.value);
     } while (marker);
   } catch (err) {
-    logger.log(Severity.Error, err);
+    logger.log(Severity.Error, err, "\nInput Parameters:", userRoleName);
 
     throw err;
   }

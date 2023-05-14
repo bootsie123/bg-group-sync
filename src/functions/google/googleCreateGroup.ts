@@ -46,7 +46,7 @@ export async function googleCreateGroup(
 
     return group;
   } catch (err) {
-    logger.log(Severity.Error, err);
+    logger.log(Severity.Error, err, "\nInput Parameters:", params);
 
     throw err;
   }
