@@ -10,6 +10,8 @@ import { FUNCTION_NAME as googleFindGroup } from "../google/googleFindGroup";
 import { FUNCTION_NAME as googleAddMemberToGroup } from "../google/googleAddMemberToGroup";
 import { FUNCTION_NAME as googleCreateGroup } from "../google/googleCreateGroup";
 
+import { genGroupEmail } from "../../utils";
+
 import environment from "../../environment";
 
 export const FUNCTION_NAME = "processStudent";
@@ -17,7 +19,7 @@ export const FUNCTION_NAME = "processStudent";
 /**
  * Processes the syncing operations required for a singular student
  * @param context The OrchestrationContext passed to the handler
- * @returns Undefined
+ * @returns True if the student was processed successfully, false if otherwise
  */
 export function* processStudentHandler(context: df.OrchestrationContext) {
   const logger = new Logger(context, "ProcessStudent");
@@ -35,10 +37,12 @@ export function* processStudentHandler(context: df.OrchestrationContext) {
     if (!user) {
       // Create Google account
 
-      return logger.log(
+      logger.log(
         Severity.Error,
         `No Google account found for user ${studentFullName}. Skipping Google sync...`
       );
+
+      return true;
     }
 
     if (student.email.toLowerCase() !== user.primaryEmail.toLowerCase()) {
@@ -60,11 +64,11 @@ export function* processStudentHandler(context: df.OrchestrationContext) {
 
     const gradYear = student.student_info.grad_year;
 
-    const studentGroupName =
-      environment.google.studentGroupEmailPrefix +
-      gradYear.substring(gradYear.length - 2) +
-      "@" +
-      environment.google.domain;
+    const studentGroupName = genGroupEmail(
+      environment.google.studentGroupEmailPrefix,
+      environment.google.domain,
+      gradYear
+    );
 
     let group: adminDirectoryV1.Schema$Group = yield context.df.callActivity(
       googleFindGroup,
@@ -102,8 +106,12 @@ export function* processStudentHandler(context: df.OrchestrationContext) {
         `Student ${student.email} already in Google Group ${studentGroupName}`
       );
     }
+
+    return true;
   } catch (err) {
     logger.log(Severity.Error, "Orchestration Error:", err);
+
+    return false;
   }
 }
 

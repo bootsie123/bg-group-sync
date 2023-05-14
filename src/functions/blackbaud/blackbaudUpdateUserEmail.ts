@@ -8,7 +8,7 @@ import { InvocationContext } from "@azure/functions";
 export const FUNCTION_NAME = "blackbaudUpdateUserEmail";
 
 /**
- * Outlines the parameters need for {@link blackbaudUpdateUserEmail}
+ * Outlines the parameters needed for {@link blackbaudUpdateUserEmail}
  */
 export interface BlackbaudUpdateUserEmailParams {
   /** The ID of the Blackbaud user to update */

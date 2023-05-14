@@ -101,6 +101,17 @@ export class BlackbaudAPI {
           } catch {
             this.logger.log(Severity.Error, "Unable to auto refresh access token");
           }
+        } else if (err.response.status === 429) {
+          const retryAfter = parseInt(err.response.headers["retry-after"]) + 3;
+
+          this.logger.log(
+            Severity.Warning,
+            `Rate limit reached. Retrying after ${retryAfter} seconds`
+          );
+
+          await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+
+          return http(originalReq);
         }
 
         throw err;
@@ -117,12 +128,17 @@ export class BlackbaudAPI {
   public async init() {
     const entity = await this.client.readEntityState(this.entity);
 
+    const notLinkedError =
+      "[BlackbaudAPI] No refresh token found! You must link a Blackbaud account before syncing";
+
+    if (!entity.entityExists) {
+      throw new Error(notLinkedError);
+    }
+
     const accessToken: AccessToken = createToken(entity.entityState);
 
     if (!accessToken) {
-      throw new Error(
-        "[BlackbaudAPI] No refresh token found! You must link a Blackbaud account before syncing"
-      );
+      throw new Error(notLinkedError);
     }
 
     if (accessToken.expired()) {
@@ -142,7 +158,9 @@ export class BlackbaudAPI {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = error.response.data;
 
-    const errors = data.errors ? data.errors.map(err => err.message) : [data.message];
+    const errors = data.errors
+      ? data.errors.map(err => (err.message ? err.message : err.raw_message))
+      : [data.message];
 
     return errors.join(",");
   }
@@ -199,6 +217,38 @@ export class BlackbaudAPI {
           marker
         }
       });
+
+      return res.data;
+    } catch (err) {
+      throw this.apiErrorHandler(err);
+    }
+  }
+
+  /**
+   * Retrieves information about the specified user
+   * @param userId The ID of the user to retrieve
+   * @param extended True if extended data should be returned (defaults to false)
+   * @returns The information on the user
+   */
+  async getUser(userId: number, extended = false) {
+    const uri = extended ? "users/extended/" : "users/";
+
+    try {
+      const res = await this.http.get(uri + userId);
+
+      return res.data;
+    } catch (err) {
+      throw this.apiErrorHandler(err);
+    }
+  }
+
+  /**
+   * Retrieves information about the current user
+   * @returns The information on the current user
+   */
+  async getMe() {
+    try {
+      const res = await this.http.get("users/me");
 
       return res.data;
     } catch (err) {
