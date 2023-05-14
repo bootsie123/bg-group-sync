@@ -17,6 +17,7 @@ export interface LoggingStream {
   info(message?: unknown, ...optionalParams: unknown[]);
   warn(message?: unknown, ...optionalParams: unknown[]);
   error(message?: unknown, ...optionalParams: unknown[]);
+  df?;
 }
 
 /**
@@ -52,6 +53,8 @@ export class Logger {
     if (!Severity[severity]) {
       severity = Severity.Info;
     }
+
+    if (this.stream?.df?.isReplaying) return;
 
     this.stream[severity](...message);
   }

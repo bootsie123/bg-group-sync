@@ -8,7 +8,7 @@ import { GoogleAPI } from "../../lib/Google";
 export const FUNCTION_NAME = "googleAddMemberToGroup";
 
 /**
- * Outlines the parameters need for {@link googleAddMemberToGroup}
+ * Outlines the parameters needed for {@link googleAddMemberToGroup}
  */
 export interface GoogleAddMemberToGroupParams {
   /** The ID of the Google Group */
@@ -43,6 +43,7 @@ export async function googleAddMemberToGroup(
     return member;
   } catch (err) {
     if (err === "Member already exists.") return;
+    else if (err.includes("Resource Not Found")) return;
 
     logger.log(Severity.Error, err);
 

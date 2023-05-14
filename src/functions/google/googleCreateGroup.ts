@@ -11,7 +11,7 @@ import { InvocationContext } from "@azure/functions";
 export const FUNCTION_NAME = "googleCreateGroup";
 
 /**
- * Outlines the parameters need for {@link googleCreateGroup}
+ * Outlines the parameters needed for {@link googleCreateGroup}
  */
 export interface GoogleCreateGroupParams {
   /** The group to create */
