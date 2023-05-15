@@ -1,0 +1,16 @@
+html {
+  overflow: auto;
+}
+
+.hero {
+  background-image: radial-gradient(#a7a7a73b 7%, #ffffff00 0%), linear-gradient(#fdfdfd 0%, #fdfdfd 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: 50px 50px, cover;
+}
+
+.box {
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px 0px #bfbfbf8c;
+}

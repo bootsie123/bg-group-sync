@@ -1,9 +1,12 @@
 import { HttpRequest, HttpResponseInit, InvocationContext, app } from "@azure/functions";
 import * as df from "durable-functions";
+import * as pug from "pug";
 
 import { getTokenFromCode } from "../../lib/OAuth2";
 import { Logger, Severity } from "../../lib/Logger";
 import { ENTITY_ID as authEntity } from "./blackbaudAuthEntity";
+
+const template = pug.compileFile(__dirname + "/../../templates/callback.pug");
 
 export const FUNCTION_NAME = "blackbaudAuthCallback";
 
@@ -18,7 +21,13 @@ function logError(logger: Logger) {
 
     return {
       status: 400,
-      body: errorText
+      headers: {
+        "content-type": "text/html"
+      },
+      body: template({
+        success: false,
+        errorText
+      })
     };
   };
 }
@@ -73,7 +82,13 @@ export async function blackbaudAuthCallbackHandler(
   logger.log("info", "OAuth2 account linked successfully!");
 
   return {
-    body: "Authentication successful!"
+    status: 200,
+    headers: {
+      "content-type": "text/html"
+    },
+    body: template({
+      success: true
+    })
   };
 }
 

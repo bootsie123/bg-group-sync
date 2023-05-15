@@ -6,9 +6,9 @@
   "scripts": {
     "start": "npm run functions",
     "prestart": "npm run clean && npm run build",
-    "build": "tsc",
+    "build": "tsc && tscp",
     "clean": "rm -rf dist",
-    "watch": "tsc -w",
+    "watch": "concurrently -r 'tsc -w' 'tscp -w'",
     "watch:dev": "concurrently -r npm:watch npm:dev",
     "watch:dev:verbose": "concurrently -r npm:watch npm:dev:verbose",
     "dev": "concurrently -r npm:functions npm:azurite",
@@ -30,6 +30,8 @@
     "axios": "^1.3.6",
     "durable-functions": "^3.0.0-alpha.4",
     "googleapis": "^105.0.0",
+    "mime": "^3.0.0",
+    "pug": "^3.0.2",
     "simple-oauth2": "^5.0.0"
   },
   "devDependencies": {
@@ -44,6 +46,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-jsdoc": "^43.1.1",
     "prettier": "^2.8.7",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "typescript-cp": "^0.1.8"
   }
 }

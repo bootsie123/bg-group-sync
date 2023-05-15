@@ -1,0 +1,16 @@
+doctype html
+html(lang="en")
+  include head
+  head
+    link(rel="stylesheet" href="/assets/background.css")
+    link(rel="stylesheet" href="/assets/logo.css")
+    block head
+  body 
+    section(class="hero is-fullheight")
+      div(class="hero-body")
+        div(class="container")
+          div(class="columns is-centered")
+            div(class="column is-5")
+              div(class="box has-text-centered")
+                block content
+      include logo

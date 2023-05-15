@@ -1,0 +1,22 @@
+extends background.pug
+
+block head
+  link(rel="stylesheet" href="/assets/setup.css")
+
+block content 
+  if !setupComplete
+    h1(class="title") Setup
+    p To begin link a Blackbaud account with the application
+    a(class="button is-fullwidth is-success is-light" href=uri)
+      span(class="icon")
+        img(src="assets/blackbaud.png")
+      span Link to Blackbaud
+  else 
+    h1(class="title has-text-success") Setup already complete!
+    p.
+      The application is already linked with a Blackbaud account. 
+      However, you may refresh the application's Blackbaud credentials by relinking your account below
+    a(class="button is-fullwidth is-warning is-light" href=uri)
+      span(class="icon")
+        img(src="assets/blackbaud.png")
+      span Relink to Blackbaud
