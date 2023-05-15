@@ -1,6 +1,6 @@
 # BG Group Sync
 
-An automated tool to sync Blackbaud community groups with Google Groups
+An automated tool to sync parents and students in Blackbaud with Google Groups.
 
 ## Installation
 
@@ -12,4 +12,4 @@ Pull requests are welcome. Any changes are appreciated!
 
 ## License
 
-[ISC](https://choosealicense.com/licenses/isc/)
+[MIT](https://choosealicense.com/licenses/mit/)
