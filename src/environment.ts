@@ -2,7 +2,7 @@ export default {
   production: process.env.NODE_ENV === "production",
   sync: {
     schedule: process.env["SYNC_SCHEDULE"] || "0 0 0 * * *",
-    scheduleEnabled: process.env["SYNC_SCHEDULE_ENABLED"] || false
+    scheduleEnabled: process.env["SYNC_SCHEDULE_ENABLED"] === "true"
   },
   blackbaud: {
     oauth: {
