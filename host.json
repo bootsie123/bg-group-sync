@@ -11,6 +11,9 @@
   "extensions": {
     "http": {
       "routePrefix": ""
+    },
+    "durableTask": {
+      "hubName": "%AzureTaskHub%"
     }
   },
   "extensionBundle": {
