@@ -42,7 +42,7 @@ export async function googleAddMemberToGroup(
 
     return member;
   } catch (err) {
-    if (err === "Member already exists.") return;
+    if (err.includes("Member already exists")) return;
     else if (err.includes("Resource Not Found")) return;
 
     logger.log(Severity.Error, err, "\nInput Parameters:", params);
