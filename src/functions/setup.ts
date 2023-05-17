@@ -2,6 +2,8 @@ import { HttpRequest, HttpResponseInit, InvocationContext, app } from "@azure/fu
 import * as df from "durable-functions";
 import * as pug from "pug";
 
+import { authorizeURL } from "../lib/OAuth2.js";
+
 import { ENTITY_ID as authEntity } from "./blackbaud/blackbaudAuthEntity";
 
 const template = pug.compileFile(__dirname + "/../templates/setup.pug");
@@ -22,6 +24,8 @@ export async function setupTrigger(
 
   const entity = await client.readEntityState(authEntity);
 
+  const uri = authorizeURL(req.url + "/callback");
+
   return {
     status: 200,
     headers: {
@@ -30,7 +34,7 @@ export async function setupTrigger(
     body: template({
       pageTitle: "Setup",
       setupComplete: entity.entityExists,
-      uri: "/auth"
+      uri
     })
   };
 }
