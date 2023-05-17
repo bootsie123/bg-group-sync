@@ -28,13 +28,28 @@ export function* processStudentHandler(context: df.OrchestrationContext) {
     const student: any = context.df.getInput();
 
     const studentFullName = student.first_name + " " + student.last_name;
+    const gradYear = student.student_info.grad_year;
 
-    const user: adminDirectoryV1.Schema$User = yield context.df.callActivity(
-      googleFindUser,
-      studentFullName
-    );
+    const queries = [];
 
-    if (!user) {
+    if (student.email) {
+      queries.push(`email=${student.email}`);
+    }
+
+    queries.push(`name=${studentFullName}`, `name=${student.preferred_name} ${student.last_name}`);
+
+    let user: adminDirectoryV1.Schema$User;
+
+    for (const query of queries) {
+      user = yield context.df.callActivity(googleFindUser, query);
+
+      if (user) break;
+    }
+
+    if (
+      !user ||
+      !user?.primaryEmail.toLowerCase().includes(gradYear.substring(gradYear.length - 2))
+    ) {
       // Create Google account
 
       logger.log(
@@ -61,8 +76,6 @@ export function* processStudentHandler(context: df.OrchestrationContext) {
         );
       }
     }
-
-    const gradYear = student.student_info.grad_year;
 
     const studentGroupName = genGroupEmail(
       environment.google.studentGroupEmailPrefix,
