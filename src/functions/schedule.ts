@@ -1,11 +1,14 @@
 import { HttpRequest, InvocationContext, Timer, app } from "@azure/functions";
 import * as df from "durable-functions";
+import * as pug from "pug";
 
 import { FUNCTION_NAME as orchestrator } from "./orchestrators/orchestrator";
 
 import environment from "../environment";
 
 export const FUNCTION_NAME = "syncStart";
+
+const template = pug.compileFile(__dirname + "/../templates/message.pug");
 
 /**
  * Starts the main sync operation as an Azure Function handler
@@ -22,7 +25,13 @@ async function startSyncHandler(input: HttpRequest | Timer, context: InvocationC
 
   return {
     status: 200,
-    body: "Sync started"
+    headers: {
+      "content-type": "text/html"
+    },
+    body: template({
+      success: true,
+      text: "Starting sync from Blackbaud to Google Groups..."
+    })
   };
 }
 
