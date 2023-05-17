@@ -30,8 +30,6 @@ export function* syncUsersHandler(context: df.OrchestrationContext) {
 
   const roleName = params.blackbaudRole.toLowerCase();
 
-  logger.log(Severity.Info, `Starting ${roleName} sync job...`);
-
   try {
     const users = yield context.df.callActivity(blackbaudGetUsers, params.blackbaudRole);
 
