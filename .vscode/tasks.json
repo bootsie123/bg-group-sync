@@ -15,8 +15,8 @@
     },
     {
       "type": "shell",
-      "label": "npm prune (functions)",
-      "command": "npm prune --production",
+      "label": "predeploy",
+      "command": "npm run prestart && npm prune --production",
       "problemMatcher": []
     },
     {
