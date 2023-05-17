@@ -1,5 +1,5 @@
 export default {
-  production: process.env.NODE_ENV === "production",
+  production: process.env.APPSETTING_NODE_ENV ? true : process.env.NODE_ENV === "production",
   sync: {
     schedule: process.env["SYNC_SCHEDULE"] || "0 0 0 * * *",
     scheduleEnabled: process.env["SYNC_SCHEDULE_ENABLED"] === "true"
