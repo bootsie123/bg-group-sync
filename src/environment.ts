@@ -35,7 +35,7 @@ export default {
       whoCanViewMembership: "ALL_MANAGERS_CAN_VIEW",
       whoCanViewGroup: "ALL_MEMBERS_CAN_VIEW",
       whoCanInvite: "ALL_MANAGERS_CAN_INVITE",
-      whoCanPostMessage: "ALL_MEMBERS_CAN_POST",
+      whoCanPostMessage: "ALL_IN_DOMAIN_CAN_POST",
       whoCanLeaveGroup: "ALL_MANAGERS_CAN_LEAVE",
       whoCanContactOwner: "ALL_MANAGERS_CAN_CONTACT",
       whoCanDiscoverGroup: "ALL_MEMBERS_CAN_DISCOVER"
@@ -48,7 +48,7 @@ export default {
       whoCanViewMembership: "ALL_MANAGERS_CAN_VIEW",
       whoCanViewGroup: "ALL_MEMBERS_CAN_VIEW",
       whoCanInvite: "ALL_MANAGERS_CAN_INVITE",
-      whoCanPostMessage: "ALL_MEMBERS_CAN_POST",
+      whoCanPostMessage: "ANYONE_CAN_POST",
       whoCanLeaveGroup: "ALL_MEMBERS_CAN_LEAVE",
       whoCanContactOwner: "ALL_MEMBERS_CAN_CONTACT",
       whoCanDiscoverGroup: "ALL_MEMBERS_CAN_DISCOVER",
