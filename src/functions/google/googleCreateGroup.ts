@@ -46,6 +46,20 @@ export async function googleCreateGroup(
 
     return group;
   } catch (err) {
+    try {
+      if (err.includes("Entity already exists")) {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        const existingGroup = await google.getGroup({
+          groupKey: params.groupOptions.email || params.groupOptions.id
+        });
+
+        return existingGroup;
+      }
+    } catch (err2) {
+      logger.log(Severity.Error, "Error fetching existing group during group creation:", err);
+    }
+
     logger.log(Severity.Error, err, "\nInput Parameters:", params);
 
     throw err;
