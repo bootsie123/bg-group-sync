@@ -52,14 +52,26 @@ export class GoogleAPI {
    * Handles errors from Google SDK requests and parses the HTTP response
    * to compile a list of error messages
    * @param error A {@link GaxiosError} recieved from a failed HTTP request
+   * @param retry An optional function ran when the Google API rate limit is exceeded
+   * @param params The parameters to pass into the retry function
    * @returns A comma seperated list of error messages
    */
-  private apiErrorHandler(error: GaxiosError) {
+  private async apiErrorHandler(error: GaxiosError, retry?, ...params) {
     const data = error.response.data;
 
-    const errors = data.error.errors.map(error => error.message);
+    let errors = data.error.errors.map(error => error.message);
 
-    return errors.join(",");
+    errors = errors.join(",");
+
+    if (errors.includes("Request rate higher than configured")) {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      if (retry) {
+        return retry.bind(this)(...params);
+      }
+    }
+
+    throw errors;
   }
 
   /**
@@ -77,7 +89,7 @@ export class GoogleAPI {
 
       return res.data;
     } catch (err) {
-      throw this.apiErrorHandler(err);
+      return this.apiErrorHandler(err, this.listUsers, params, options);
     }
   }
 
@@ -96,7 +108,7 @@ export class GoogleAPI {
 
       return res.data;
     } catch (err) {
-      throw this.apiErrorHandler(err);
+      return this.apiErrorHandler(err, this.listGroups, params, options);
     }
   }
 
@@ -115,7 +127,7 @@ export class GoogleAPI {
 
       return res.data;
     } catch (err) {
-      throw this.apiErrorHandler(err);
+      return this.apiErrorHandler(err, this.getGroup, params, options);
     }
   }
 
@@ -134,7 +146,7 @@ export class GoogleAPI {
 
       return res.data;
     } catch (err) {
-      throw this.apiErrorHandler(err);
+      return this.apiErrorHandler(err, this.createGroup, params, options);
     }
   }
 
@@ -153,7 +165,7 @@ export class GoogleAPI {
 
       return res.data;
     } catch (err) {
-      throw this.apiErrorHandler(err);
+      return this.apiErrorHandler(err, this.updateGroupSettings, params, options);
     }
   }
 
@@ -172,7 +184,7 @@ export class GoogleAPI {
 
       return res.data;
     } catch (err) {
-      throw this.apiErrorHandler(err);
+      return this.apiErrorHandler(err, this.addMemberToGroup, params, options);
     }
   }
 }
