@@ -5,15 +5,15 @@ import { BlackbaudAPI } from "../../lib/Blackbaud";
 import { Logger, Severity } from "../../lib/Logger";
 import { InvocationContext } from "@azure/functions";
 
-export const FUNCTION_NAME = "blackbaudGetMe";
+export const FUNCTION_NAME = "blackbaudTestAuth";
 
 /**
- * Retrieves information about the specified user
- * @param userId The ID of the user to retrieve
+ * Tests authentication with the linked Blackbaud account
+ * @param input Function inputs
  * @param context The invocation context for the function
- * @returns The information on the user
+ * @returns True if authentication is successful, otherwise false
  */
-export async function blackbaudGetMe(userId: number, context: InvocationContext) {
+export async function blackbaudTestAuth(input, context: InvocationContext) {
   const logger = new Logger(context, "Blackbaud");
 
   const client = df.getClient(context);
@@ -23,11 +23,11 @@ export async function blackbaudGetMe(userId: number, context: InvocationContext)
   try {
     await blackbaud.init();
 
-    const user = await blackbaud.getMe();
+    const roles = await blackbaud.getRoles();
 
-    return user;
+    return roles ? true : false;
   } catch (err) {
-    logger.log(Severity.Error, err, "\nInput Parameters:", userId);
+    logger.log(Severity.Error, err);
 
     throw err;
   }
@@ -35,5 +35,5 @@ export async function blackbaudGetMe(userId: number, context: InvocationContext)
 
 df.app.activity(FUNCTION_NAME, {
   extraInputs: [df.input.durableClient()],
-  handler: blackbaudGetMe
+  handler: blackbaudTestAuth
 });
