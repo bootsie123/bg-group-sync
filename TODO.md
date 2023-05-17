@@ -1,6 +1,5 @@
 # TODO
 
-- Potentially refactor `blackbaudAuth.ts` to be a web based setup wizard (or use UI panel in Blackbaud app)
 - Add CI/CD pipeline
 - Add unit tests
 
@@ -15,3 +14,11 @@ Next Sprint:
 Questions:
 
 - N/A
+
+Required Blackbaud Roles:
+
+- SKY API Data Sync
+- Any Manager Role
+- Platform Manager
+- Page Manager
+- Content Editor
