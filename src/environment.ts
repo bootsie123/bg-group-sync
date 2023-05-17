@@ -29,6 +29,7 @@ export default {
     domain: process.env["GOOGLE_DOMAIN"],
     studentGroupEmailPrefix: process.env["GOOGLE_STUDENT_GROUP_EMAIL_PREFIX"] || "students",
     studentGroupName: process.env["GOOGLE_STUDENT_GROUP_NAME"] || "Class of ",
+    // See https://developers.google.com/admin-sdk/groups-settings/v1/reference/groups#resource for exact group settings
     studentGroupPermissions: {
       whoCanAdd: "ALL_MANAGERS_CAN_ADD",
       whoCanJoin: "INVITED_CAN_JOIN",
