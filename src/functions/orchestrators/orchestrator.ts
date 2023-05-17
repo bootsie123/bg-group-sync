@@ -5,7 +5,7 @@ import { Logger, Severity } from "../../lib/Logger";
 import { FUNCTION_NAME as processStudent } from "./processStudent";
 import { FUNCTION_NAME as processParent } from "./processParent";
 import { FUNCTION_NAME as syncUsers } from "./syncUsers";
-import { FUNCTION_NAME as blackbaudGetMe } from "../blackbaud/blackbaudGetMe";
+import { FUNCTION_NAME as blackbaudTestAuth } from "../blackbaud/blackbaudTestAuth";
 
 import environment from "../../environment";
 
@@ -19,10 +19,8 @@ export const FUNCTION_NAME = "syncOrchestrator";
 export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
   const logger = new Logger(context, "Orchestrator");
 
-  logger.log(Severity.Info, "Starting sync job...");
-
   try {
-    yield context.df.callActivity(blackbaudGetMe);
+    yield context.df.callActivity(blackbaudTestAuth);
 
     const tasks = [];
 
