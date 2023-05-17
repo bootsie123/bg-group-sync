@@ -39,25 +39,40 @@ export async function googleCreateGroup(
       requestBody: params.groupOptions
     });
 
-    await google.updateGroupSettings({
+    const updateParams = {
       groupUniqueId: group.email,
       requestBody: params.permissionOptions
-    });
+    };
+
+    try {
+      await google.updateGroupSettings(updateParams);
+    } catch (err) {
+      logger.log(
+        Severity.Warning,
+        `Unable to update group settings of group ${group.email}`,
+        "\nInput Parameters:",
+        updateParams
+      );
+    }
 
     return group;
   } catch (err) {
-    try {
-      if (err.includes("Entity already exists")) {
+    if (err.includes("Entity already exists")) {
+      const groupKey = params.groupOptions.email || params.groupOptions.id;
+
+      try {
         await new Promise(resolve => setTimeout(resolve, 3000));
 
-        const existingGroup = await google.getGroup({
-          groupKey: params.groupOptions.email || params.groupOptions.id
-        });
+        const existingGroup = await google.getGroup({ groupKey });
 
         return existingGroup;
+      } catch (err) {
+        logger.log(
+          Severity.Error,
+          `Error fetching existing group ${groupKey} during group creation:`,
+          err
+        );
       }
-    } catch (err2) {
-      logger.log(Severity.Error, "Error fetching existing group during group creation:", err);
     }
 
     logger.log(Severity.Error, err, "\nInput Parameters:", params);
