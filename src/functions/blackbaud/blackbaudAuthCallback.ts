@@ -6,7 +6,7 @@ import { getTokenFromCode } from "../../lib/OAuth2";
 import { Logger, Severity } from "../../lib/Logger";
 import { ENTITY_ID as authEntity } from "./blackbaudAuthEntity";
 
-const template = pug.compileFile(__dirname + "/../../templates/callback.pug");
+const template = pug.compileFile(__dirname + "/../../templates/message.pug");
 
 export const FUNCTION_NAME = "blackbaudAuthCallback";
 
@@ -87,7 +87,8 @@ export async function blackbaudAuthCallbackHandler(
       "content-type": "text/html"
     },
     body: template({
-      success: true
+      success: true,
+      text: "Blackbaud account successfully linked"
     })
   };
 }
