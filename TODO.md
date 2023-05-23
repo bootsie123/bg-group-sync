@@ -10,6 +10,7 @@ Current Sprint:
 Next Sprint:
 
 - Automatically create student Google accounts if they don't exist
+- Email alerts
 
 Questions:
 
