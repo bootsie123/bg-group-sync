@@ -10,7 +10,12 @@ Current Sprint:
 Next Sprint:
 
 - Automatically create student Google accounts if they don't exist
+  - Create account, set temp password, put in proper OU (default to top level if app settings not specified)
+  - For duplicate accounts, append an optional string plus an increment at the end of email
+    -  Example: "amca28.1@thecountryschool.org"
+    -  Append: ".1"
 - Email alerts
+- Documentation
 
 Questions:
 
