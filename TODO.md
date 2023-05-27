@@ -17,8 +17,9 @@ Questions:
 
 Required Blackbaud Roles:
 
+- SKY API Basic
 - SKY API Data Sync
 - Any Manager Role
 - Platform Manager
 - Page Manager
-- Content Editor
+- Content Editor (possibly Content Manager)
