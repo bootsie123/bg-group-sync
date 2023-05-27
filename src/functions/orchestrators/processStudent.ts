@@ -60,7 +60,10 @@ export function* processStudentHandler(context: df.OrchestrationContext) {
       return true;
     }
 
-    if (student.email.toLowerCase() !== user.primaryEmail.toLowerCase()) {
+    if (
+      environment.sync.syncStudentEmails &&
+      student.email.toLowerCase() !== user.primaryEmail.toLowerCase()
+    ) {
       try {
         yield context.df.callActivity(blackbaudUpdateUserEmail, {
           userId: student.id,

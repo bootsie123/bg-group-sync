@@ -24,21 +24,27 @@ export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
 
     const tasks = [];
 
-    tasks.push(
-      context.df.callSubOrchestrator(syncUsers, {
-        blackbaudRole: environment.blackbaud.sync.studentRole,
-        processor: processStudent
-      })
-    );
+    if (environment.sync.syncStudents) {
+      tasks.push(
+        context.df.callSubOrchestrator(syncUsers, {
+          blackbaudRole: environment.blackbaud.sync.studentRole,
+          processor: processStudent
+        })
+      );
+    }
 
-    tasks.push(
-      context.df.callSubOrchestrator(syncUsers, {
-        blackbaudRole: environment.blackbaud.sync.parentRole,
-        processor: processParent
-      })
-    );
+    if (environment.sync.syncParents) {
+      tasks.push(
+        context.df.callSubOrchestrator(syncUsers, {
+          blackbaudRole: environment.blackbaud.sync.parentRole,
+          processor: processParent
+        })
+      );
+    }
 
-    yield context.df.Task.all(tasks);
+    if (tasks.length > 0) {
+      yield context.df.Task.all(tasks);
+    }
   } catch (err) {
     logger.log(Severity.Error, "Orchestration Error:", err);
   }

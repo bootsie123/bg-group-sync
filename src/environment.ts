@@ -4,7 +4,10 @@ export default {
     : process.env.NODE_ENV === "production",
   sync: {
     schedule: process.env.SYNC_SCHEDULE || "0 0 0 * * *",
-    scheduleEnabled: process.env.SYNC_SCHEDULE_ENABLED === "true"
+    scheduleEnabled: process.env.SYNC_SCHEDULE_ENABLED === "true",
+    syncStudents: process.env.SYNC_STUDENTS,
+    syncParents: process.env.SYNC_PARENTS,
+    syncStudentEmails: process.env.SYNC_STUDENT_EMAILS
   },
   blackbaud: {
     oauth: {
