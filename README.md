@@ -134,13 +134,11 @@ To start the application locally, simply run:
 npm start
 ```
 
-Refer to
-
 ## Deployment to Azure
 
 ## Development
 
-// Document package.json scripts
+TODO: Document package.json scripts
 
 ## Contributing
 
