@@ -13,7 +13,7 @@ import { genGroupEmail } from "../../utils";
 
 import environment from "../../environment";
 
-export const FUNCTION_NAME = "ProcessParent";
+export const FUNCTION_NAME = "processParent";
 
 /**
  * Processes the syncing operations required for a singular parent
