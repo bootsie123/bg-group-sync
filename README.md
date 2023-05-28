@@ -78,7 +78,11 @@ This application makes use of Blackbaud's SKY API in order to communicate with y
 
 3. Now, to get the application's OAuth ID, click on the newly made application and then click on "Show" under "Application ID (OAuth client_id)" and use the revealed string for `BLACKBAUD_OAUTH_ID`. Then to retrieve the OAuth secret, click on "Show" under "Primary application secret (OAuth client_secret)" and use the revealed string for `BLACKBAUD_OAUTH_SECRET`.
 
-4. For the subscription key, go back to your application list and then click on "My subscriptions" in the left navbar. Next, click on "Show" to the right of "Primary access key" and use the revealed string for `BLACKBAUD_SUBSCRIPTION_KEY`.
+4. Under "Redirect URIs", click on "Edit" and then "Add a redirect URI". If you're running the application locally, enter `http://localhost:7071/setup/callback`. Otherwise, add the domain name being used plus the following path: `/setup/callback`.
+
+5. To connect the application to your Blackbaud environment, click on "Copy links" -> "Connect application link" and visit the copied URL. The web page will guide you through the process of connecting the application to your environment.
+
+6. For the subscription key, go back to your application list and then click on "My subscriptions" in the left navbar. Next, click on "Show" to the right of "Primary access key" and use the revealed string for `BLACKBAUD_SUBSCRIPTION_KEY`.
 
 The application should now have access to your Blackbaud SKY API application!
 
@@ -128,17 +132,69 @@ _Note: The default permissions for created Google Groups can be modified in `src
 
 ## Usage
 
-To start the application locally, simply run:
+To start the application locally simply run:
 
 ```bash
-npm start
+npm run build
+
+npm run local
 ```
+
+This will start a local web server at `http://localhost:7071`.
+
+### Setup
+
+Before the application can fully work, a Blackbaud account must linked. Since this account will be used by the SKY API, it's recommended that you setup a new user specifically for this application. Whichever user you choose (existing or new), make sure it has the following roles:
+
+- SKY API Basic
+- SKY API Data Sync
+- Any Manager Role
+- Platform Manager
+- Page Manager
+- Content Editor (possibly Content Manager)
+
+Afterwards, visit `http://localhost:7071/setup` to go through the setup process of linking your Blackbaud user to the application.
+
+Once complete, BG Group Sync is ready to go! To start a sync job, you can either invoke it manually or if schedules are enabled, wait for the schedule to trigger the job.
+
+### Manual Sync Job
+
+To manually start a sync job, simply visit: `http://localhost:7071/sync`
+
+### Sync Schedules
+
+With sync schedules, you can have sync jobs run automatically without any user input. To enable it, simply set `SYNC_SCHEDULE_ENABLED` to `true` in the application's settings. The scheduling is controlled via the `SYNC_SCHEDULE` setting with [NCrontab](https://github.com/atifaziz/NCrontab) formatted strings. A few example situations are shown below:
+
+**NCrontab Format:**
+
+```
+* * * * *
+- - - - -
+| | | | |
+| | | | +----- day of week (0 - 6) (Sunday=0)
+| | | +------- month (1 - 12)
+| | +--------- day of month (1 - 31)
+| +----------- hour (0 - 23)
++------------- min (0 - 59)
+```
+
+**Examples:**
+
+| Occurance                     | NCrontab       |
+| ----------------------------- | -------------- |
+| Every 6 hours                 | 0 _/6 _ \* \*  |
+| 12AM every day                | 0 0 0 \* \* \* |
+| 1AM every Sunday              | 0 1 \* \* 0    |
+| 2AM every 2 days              | 0 2 _/2 _ \*   |
+| 2AM on the 1st of every month | 0 2 1 \* \*    |
+
+_Note: For more examples, refer to [crontab guru](https://crontab.guru/)_
 
 ## Deployment to Azure
 
-## Development
+[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2Fbootsie123%2Fbg-group-sync%2Fblob%2Fmain%2Fazuredeploy.bicep)
 
-TODO: Document package.json scripts
+To deploy the application to Azure, simply click on the link above and fill out the parameters in the deployment template. By default the location for all resources is based on the choosen `Region`. However, this can be changed by using the `Location` and `App Insights Location` options.
 
 ## Contributing
 
@@ -146,4 +202,4 @@ Pull requests are welcome. Any changes are appreciated!
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
