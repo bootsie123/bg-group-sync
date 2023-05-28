@@ -5,9 +5,9 @@ export default {
   sync: {
     schedule: process.env.SYNC_SCHEDULE || "0 0 0 * * *",
     scheduleEnabled: process.env.SYNC_SCHEDULE_ENABLED === "true",
-    syncStudents: process.env.SYNC_STUDENTS,
-    syncParents: process.env.SYNC_PARENTS,
-    syncStudentEmails: process.env.SYNC_STUDENT_EMAILS
+    syncStudents: process.env.SYNC_STUDENTS === "true",
+    syncParents: process.env.SYNC_PARENTS === "true",
+    syncStudentEmails: process.env.SYNC_STUDENT_EMAILS === "true"
   },
   blackbaud: {
     oauth: {
