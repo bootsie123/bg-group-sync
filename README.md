@@ -1,5 +1,9 @@
 # BG Group Sync
 
+[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2Fbootsie123%2Fbg-group-sync%2Fblob%2Fmain%2Fazuredeploy.bicep)
+[![License](https://img.shields.io/github/license/bootsie123/bg-group-sync)](https://github.com/bootsie123/bg-group-sync/blob/main/LICENSE)
+[![Version](https://img.shields.io/github/package-json/v/bootsie123/bg-group-sync)](https://github.com/bootsie123/bg-group-sync/blob/main/package.json)
+
 An automated tool to sync parents and students in Blackbaud to Google Groups.
 
 Google Groups offers a convient way to have mailing and distribution lists for teachers, parents, and students. However, manually maintaining the members of each individual group can become time consuming and combersome. If your school makes use of Blackbaud as your SIS, then you're in luck! BG Group Sync offers a convient way to find users in Blackbaud and automatically add them to the appropriate Google Groups.
