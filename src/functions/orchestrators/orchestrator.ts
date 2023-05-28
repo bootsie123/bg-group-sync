@@ -45,11 +45,11 @@ export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
     if (tasks.length > 0) {
       yield context.df.Task.all(tasks);
     }
+
+    logger.log(Severity.Info, "No tasks left to do. Sync completed successfully!");
   } catch (err) {
     logger.log(Severity.Error, "Orchestration Error:", err);
   }
-
-  logger.log(Severity.Info, "No tasks left to do. Sync completed successfully!");
 }
 
 df.app.orchestration(FUNCTION_NAME, syncOrchestrationHandler);
