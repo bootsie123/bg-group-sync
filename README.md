@@ -141,14 +141,14 @@ To start the application locally simply run:
 ```bash
 npm run build
 
-npm run local
+npm run start:local
 ```
 
 This will start a local web server at `http://localhost:7071`.
 
 ### Setup
 
-Before the application can fully work, a Blackbaud account must linked. Since this account will be used by the SKY API, it's recommended that you setup a new user specifically for this application. Whichever user you choose (existing or new), make sure it has the following roles:
+Before the BG Group Sync can fully work, a Blackbaud account must linked. Since this account will be used by the SKY API, it's recommended that you setup a new user specifically for this application. Whichever user you choose (existing or new), make sure it has the following roles:
 
 - SKY API Basic
 - SKY API Data Sync
@@ -198,7 +198,27 @@ _Note: For more examples, refer to [crontab guru](https://crontab.guru/)_
 
 [![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbootsie123%2Fbg-group-sync%2Fmain%2Fazuredeploy.json)
 
-To deploy the application to Azure, simply click on the link above and fill out the parameters in the deployment template. By default the location for all resources is based on the choosen `Region`. However, this can be changed by using the `Location` and `App Insights Location` options.
+### Deploy Resources
+
+To deploy the necessary resources to Azure, simply click on the link above and fill out the parameters in the deployment template. By default the location for all resources is based on the choosen `Region`. However, this can be changed by using the `Location` and `App Insights Location` options.
+
+### Deploy the Function App
+
+Once the resources are deployed, the function app itself can be deployed via the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli). Make sure to have it installed and authenticated via `az login` before proceeding with the following:
+
+```bash
+npm run deploy -- APP_NAME
+```
+
+_Note: Replace `APP_NAME` with the name of the app used when deploying the Azure resources_
+
+### Configure Application Settings
+
+To change the application's settings, go to the function app in the Azure dashboard and then click on "Configuration" under "Settings" in the left hand side navbar. Refer to the [Configuration](#configuration) section for specific details on each setting. Also make sure to fill in all required settings with their appropriate values before using the application.
+
+### Setup
+
+Refer to the [Setup](#setup) section for specific details on how to fully setup BG Group Sync. All references to `localhost` should be replaced with your function app's URL. Keep in mind that by default all HTTP routes are public. In order to restrict access, networking rules can be setup via "Settings" -> "Networking" -> "Access restriction" in the function app. The [Azure App Service access restrictions](https://learn.microsoft.com/en-us/azure/app-service/overview-access-restrictions) guide offers specifics on how this page can be utilized.
 
 ## Contributing
 
