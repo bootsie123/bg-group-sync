@@ -3,10 +3,13 @@ import * as df from "durable-functions";
 import * as pug from "pug";
 
 import { FUNCTION_NAME as orchestrator } from "./orchestrators/orchestrator";
+import { Logger } from "../lib/Logger";
 
 import environment from "../environment";
 
 export const FUNCTION_NAME = "syncStart";
+
+const INSTANCE_ID = "syncOperation";
 
 const template = pug.compileFile(__dirname + "/../templates/message.pug");
 
@@ -17,11 +20,28 @@ const template = pug.compileFile(__dirname + "/../templates/message.pug");
  * @returns An HTTP response if the input is of type {@link HttpRequest}
  */
 async function startSyncHandler(input: HttpRequest | Timer, context: InvocationContext) {
+  const logger = new Logger(context, "SyncStart");
+
   const client = df.getClient(context);
 
-  const instanceId = await client.startNew(orchestrator);
+  const status = await client.getStatus(INSTANCE_ID);
 
-  context.log(`Started orchestration with ID = ${instanceId}`);
+  let message = "Sync job already started";
+
+  if (
+    !status ||
+    status.runtimeStatus === "Completed" ||
+    status.runtimeStatus === "Failed" ||
+    status.runtimeStatus === "Terminated"
+  ) {
+    logger.log("info", "Starting new sync job...");
+
+    await client.startNew(orchestrator, {
+      instanceId: INSTANCE_ID
+    });
+
+    message = "Starting sync from Blackbaud to Google Groups...";
+  }
 
   return {
     status: 200,
@@ -30,7 +50,7 @@ async function startSyncHandler(input: HttpRequest | Timer, context: InvocationC
     },
     body: template({
       success: true,
-      text: "Starting sync from Blackbaud to Google Groups..."
+      text: message
     })
   };
 }
