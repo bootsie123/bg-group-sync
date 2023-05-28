@@ -1,6 +1,6 @@
 # BG Group Sync
 
-[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2Fbootsie123%2Fbg-group-sync%2Fblob%2Fmain%2Fazuredeploy.bicep)
+[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbootsie123%2Fbg-group-sync%2Fmain%2Fazuredeploy.json)
 [![License](https://img.shields.io/github/license/bootsie123/bg-group-sync)](https://github.com/bootsie123/bg-group-sync/blob/main/LICENSE)
 [![Version](https://img.shields.io/github/package-json/v/bootsie123/bg-group-sync)](https://github.com/bootsie123/bg-group-sync/blob/main/package.json)
 
@@ -196,7 +196,7 @@ _Note: For more examples, refer to [crontab guru](https://crontab.guru/)_
 
 ## Deployment to Azure
 
-[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2Fbootsie123%2Fbg-group-sync%2Fblob%2Fmain%2Fazuredeploy.bicep)
+[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbootsie123%2Fbg-group-sync%2Fmain%2Fazuredeploy.json)
 
 To deploy the application to Azure, simply click on the link above and fill out the parameters in the deployment template. By default the location for all resources is based on the choosen `Region`. However, this can be changed by using the `Location` and `App Insights Location` options.
 
