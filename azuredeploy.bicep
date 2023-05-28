@@ -69,7 +69,9 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2022-09-01' = {
     tier: 'Dynamic'
   }
   kind: 'functionapp'
-  properties: {}
+  properties: {
+    reserved: true
+  }
 }
 
 resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
@@ -83,6 +85,7 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
     serverFarmId: hostingPlan.id
     siteConfig: {
       appSettings: concat(functionAppSettings, defaultSettingsFiltered)
+      linuxFxVersion: 'node|18'
     }
     httpsOnly: true
   }
