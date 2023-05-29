@@ -3,7 +3,7 @@ import * as df from "durable-functions";
 import * as pug from "pug";
 
 import { FUNCTION_NAME as orchestrator } from "./orchestrators/orchestrator";
-import { Logger } from "../lib/Logger";
+import { Logger, Severity } from "../lib/Logger";
 
 import environment from "../environment";
 
@@ -26,7 +26,7 @@ async function startSyncHandler(input: HttpRequest | Timer, context: InvocationC
 
   const status = await client.getStatus(INSTANCE_ID);
 
-  let message = "Sync job already started";
+  let message = "Sync job already in progress";
 
   if (
     !status ||
@@ -34,14 +34,14 @@ async function startSyncHandler(input: HttpRequest | Timer, context: InvocationC
     status.runtimeStatus === "Failed" ||
     status.runtimeStatus === "Terminated"
   ) {
-    logger.log("info", "Starting new sync job...");
+    message = "Starting sync from Blackbaud to Google Groups...";
 
     await client.startNew(orchestrator, {
       instanceId: INSTANCE_ID
     });
-
-    message = "Starting sync from Blackbaud to Google Groups...";
   }
+
+  logger.log(Severity.Info, message);
 
   return {
     status: 200,
