@@ -42,20 +42,39 @@ export class Logger {
 
   /**
    * Logs a message to the {@link LoggingStream}
+   * @param force True if the message should be logged regardless of replay status
    * @param severity The severity of the message
    * @param message The message to log
    */
-  log(severity: Severity | string, ...message: unknown[]) {
+  private logMessage(force: boolean, severity: Severity | string, ...message: unknown[]) {
     if (this.source) {
       message = [`[${this.source}]`, ...message];
     }
 
-    if (!Severity[severity]) {
+    if (!Object.values(Severity).includes(severity as Severity)) {
       severity = Severity.Info;
     }
 
-    if (this.stream?.df?.isReplaying) return;
+    if (!force && this.stream?.df?.isReplaying) return;
 
     this.stream[severity](...message);
+  }
+
+  /**
+   * Logs a message to the {@link LoggingStream}
+   * @param severity The severity of the message
+   * @param message The message to log
+   */
+  log(severity: Severity | string, ...message: unknown[]) {
+    this.logMessage(false, severity, ...message);
+  }
+
+  /**
+   * Forces a message to be logged to the {@link LoggingStream} regardless of replay status
+   * @param severity The severity of the message
+   * @param message The message to log
+   */
+  forceLog(severity: Severity | string, ...message: unknown[]) {
+    this.logMessage(true, severity, ...message);
   }
 }
