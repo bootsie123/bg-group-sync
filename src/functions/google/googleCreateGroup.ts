@@ -1,12 +1,12 @@
 import * as df from "durable-functions";
-
-import { Logger, Severity } from "../../lib/Logger";
-import { GoogleAPI } from "../../lib/Google";
 import {
   admin_directory_v1 as adminDirectoryV1,
   groupssettings_v1 as groupsSettingsV1
 } from "googleapis";
 import { InvocationContext } from "@azure/functions";
+
+import { Logger, Severity } from "../../lib/Logger";
+import { GoogleAPI } from "../../lib/Google";
 
 export const FUNCTION_NAME = "googleCreateGroup";
 

@@ -1,11 +1,11 @@
 import * as df from "durable-functions";
 import { InvocationContext } from "@azure/functions";
+import { admin_directory_v1 as adminDirectoryV1 } from "googleapis";
 
 import { Logger, Severity } from "../../lib/Logger";
 import { GoogleAPI } from "../../lib/Google";
 
 import environment from "../../environment";
-import { admin_directory_v1 as adminDirectoryV1 } from "googleapis";
 
 export const FUNCTION_NAME = "googleFindUser";
 
