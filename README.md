@@ -102,7 +102,14 @@ To interact with your Google Admin environment, this application uses Google's A
 
 4. In order to create login credentials for the service account, click on the newly created account under "Service Accounts" and then click on "KEYS". Then, click on "ADD KEY" -> "Create new key". From there, select JSON and then "CREATE". Then, open up the downloaded json file and use `client_email` key for `GOOGLE_AUTH_SERVICE_EMAIL` and the `private_key` key for `GOOGLE_AUTH_SERVICE_KEY`.
 
-5. TODO: Add instructions for setting up the service account with the necessary Google Group API roles in the Google Admin Console
+5. Now, in the Google Admin Console, ensure the service account is assigned a role with at minimum the following privileges:
+
+Admin API Privileges:
+
+- Users > Read
+- Groups > Create
+- Groups > Read
+- Groups > Update
 
 The application should now have access to your Google Groups!
 
