@@ -60,5 +60,18 @@ export default {
       whoCanDiscoverGroup: "ALL_MEMBERS_CAN_DISCOVER",
       allowExternalMembers: true
     }
+  },
+  smtp: {
+    reportsEnabled: process.env.SMTP_REPORTS_ENABLED === "true",
+    reportFrequency: process.env.SMTP_REPORT_FREQUENCY,
+    toEmail: process.env.SMTP_TO_EMAIL,
+    sendAsEmail: process.env.SMTP_SEND_AS_EMAIL,
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT, 10) || 587,
+    useTLS: process.env.SMTP_USE_TLS === "true",
+    auth: {
+      username: process.env.SMTP_USERNAME,
+      password: process.env.SMTP_PASSWORD
+    }
   }
 };

@@ -47,7 +47,7 @@ interface ProcessResults {
  *
  * Requires that a {@link syncUsersHandlerParams} object be passed in as {@link df.OrchestrationContext} input
  * @param context The OrchestrationContext passed to the handler
- * @returns Undefined
+ * @returns A {@link syncUsersResults} object which contains the results of the sync operation
  */
 export function* syncUsersHandler(
   context: df.OrchestrationContext
@@ -118,7 +118,7 @@ export function* syncUsersHandler(
 
     return {
       role: roleName,
-      errors: [err]
+      errors: [err?.message || err]
     };
   }
 }

@@ -6,6 +6,7 @@ import { FUNCTION_NAME as processStudent } from "./processStudent";
 import { FUNCTION_NAME as processParent } from "./processParent";
 import { FUNCTION_NAME as syncUsers, syncUsersResults } from "./syncUsers";
 import { FUNCTION_NAME as blackbaudTestAuth } from "../blackbaud/blackbaudTestAuth";
+import { FUNCTION_NAME as smtpSendJobReport } from "../smtp";
 
 import environment from "../../environment";
 
@@ -47,15 +48,43 @@ export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
     if (tasks.length > 0) {
       const results: syncUsersResults[] = yield context.df.Task.all(tasks);
 
+      let hasErrors = false;
+      let hasWarnings = false;
+
       for (const result of results) {
-        logger.forceLog(
-          Severity.Info,
-          `\nSync Results:\n-------------\nRole: ${result.role}\nSynced: ${result.synced}/${
-            result.total
-          } (${Number((result.synced / result.total) * 100).toFixed(0)}%)\nErrors:\n\t${
-            result.errors.join("\n\t") || "None"
-          }\nWarnings:\n\t${result.warnings.join("\n\t") || "None"}`
-        );
+        if (result.errors) hasErrors = true;
+        if (result.warnings) hasWarnings = true;
+
+        let logMessage = `\nSync Results:\n-------------\nRole: ${result.role}\n`;
+
+        if (result.synced && result.total) {
+          const syncPercentage = Number((result.synced / result.total) * 100).toFixed(0);
+
+          logMessage += `Synced: ${result.synced}/${result.total} (${syncPercentage}%)\n`;
+        } else {
+          logMessage += "Synced: N/A\n";
+        }
+
+        logMessage += `Warnings:\n\t${result.warnings?.join("\n\t") || "None"}\nErrors:\n\t${
+          result.errors?.join("\n\t") || "None"
+        }`;
+
+        logger.forceLog(Severity.Info, logMessage);
+      }
+
+      const reportFrequency = environment.smtp.reportFrequency;
+
+      if (
+        environment.smtp.reportsEnabled &&
+        ((reportFrequency === "on-error" && (hasErrors || hasWarnings)) ||
+          (reportFrequency === "on-warning" && hasWarnings) ||
+          reportFrequency === "always")
+      ) {
+        logger.forceLog(Severity.Info, "Job reports enabled! Sending report...");
+
+        yield context.df.callActivity(smtpSendJobReport, results);
+
+        logger.forceLog(Severity.Info, "Job report email sent!");
       }
     }
 

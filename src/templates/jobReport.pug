@@ -1,0 +1,68 @@
+mjml
+  mj-head
+    mj-title BG Group Sync Sync Report
+    mj-attributes
+      mj-body(background-color="#F0F0F0")
+      mj-all(font-family="BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,Arial,sans-serif" padding="0")
+    mj-raw
+      meta(name="color-scheme" content="light dark")
+      meta(name="supported-color-schemes" content="light dark")
+    mj-style
+      | :root {
+      |    color-scheme: light dark;
+      |    supported-color-schemes: light dark;
+      |  }
+      | 
+      |  @media(prefers-color-scheme: dark) {
+      |    body, body > div {
+      |      background-color: #111111 !important;
+      |    }
+      |    
+      |    div {
+      |      color: #DDDCDA !important;
+      |    }
+      |    
+      |    .main-section, .main-section table { 
+      |      background-color: #0e0e0e !important;
+      |    }
+      |    
+      |    .divider p { 
+      |      border-color: #7b7b7b !important; 
+      |    }     
+      |  }
+  mj-body
+    mj-section(full-width="full-width" padding="30px 0px 20px 0px")
+      mj-column
+        mj-table(font-size="20px" align="left" padding="0")
+          tr
+            td(style="padding: 0px; width: 30px")
+              img(align="left" width="30px" src="https://raw.githubusercontent.com/bootsie123/bg-group-sync/main/src/public/logo.svg")
+            td(style="padding: 0 5px") Group Sync
+    mj-section(css-class="main-section" background-color="white" padding="30px 0px" border-radius="4px")
+      mj-column
+        mj-text(align="center" font-size="24px") Sync Report - #{date}
+        mj-divider(css-class="divider" padding="20px 50px" border-width="1px" border-color="lightgrey")
+        each job, i in jobResults
+          if job.role
+            mj-text(padding="10px 30px 5px 30px" font-size="14px" line-height="16.8px") <b>Role:</b> #{job.role}
+
+          - let synced = "N/A"
+
+          if job.synced && job.total
+            - synced = `${job.synced}/${job.total} (${Number((job.synced / job.total) * 100).toFixed(0)}%)`
+
+          mj-text(padding="10px 30px 5px 30px" font-size="14px" line-height="16.8px") <b>Synced:</b> #{synced}
+
+          mj-text(padding="10px 30px 5px 30px" font-size="14px" line-height="16.8px") <b>Warnings:</b> #{job.warnings && job.warnings.length > 0 ? "" : "None"}
+          each warning in job.warnings || []
+            mj-text(padding="5px 30px 5px 50px" font-size="14px" line-height="16.8px") - #{warning}
+          
+          mj-text(padding="10px 30px 5px 30px" font-size="14px" line-height="16.8px") <b>Errors:</b> #{job.errors && job.errors.length > 0 ? "" : "None"}
+          each error in job.errors || []
+            mj-text(padding="5px 30px 5px 50px" font-size="14px" line-height="16.8px") - #{error}
+          
+          if i < jobResults.length - 1
+            mj-divider(css-class="divider" padding="20px 50px" border-width="1px" border-style="dotted" border-color="lightgrey")
+    mj-section(full-width="full-width" padding="40px 25px")
+      mj-column
+        mj-text(align="center" color="#B9B9B9" padding-bottom="12px") This is an automated email. <strong>DO NOT REPLY</strong>
