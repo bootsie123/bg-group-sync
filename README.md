@@ -1,4 +1,4 @@
-# BG Group Sync
+# <img alt="BG" src="src/public/logo.svg" height="30"> Group Sync
 
 [![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbootsie123%2Fbg-group-sync%2Fmain%2Fazuredeploy.json)
 [![License](https://img.shields.io/github/license/bootsie123/bg-group-sync)](https://github.com/bootsie123/bg-group-sync/blob/main/LICENSE)
