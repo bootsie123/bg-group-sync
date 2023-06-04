@@ -15,6 +15,7 @@ Google Groups offers a convient way to have mailing and distribution lists for t
 - Individual control over whether to sync parents and/or students
 - Automatic creation of missing Google Groups (including auto naming and setting of default permissions)
 - Automatic updating of student emails in Blackbaud (matches a students email in Blackbaud with their email found in the Google domain)
+- Sync job reports via email
 - Built to be hosted using Azure Functions (free plan)
 - Self hosted end to end
 
