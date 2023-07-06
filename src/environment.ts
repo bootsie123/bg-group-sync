@@ -4,7 +4,10 @@ export default {
     : process.env.NODE_ENV === "production",
   sync: {
     schedule: process.env.SYNC_SCHEDULE || "0 0 0 * * *",
-    scheduleEnabled: process.env.SYNC_SCHEDULE_ENABLED === "true"
+    scheduleEnabled: process.env.SYNC_SCHEDULE_ENABLED === "true",
+    syncStudents: process.env.SYNC_STUDENTS === "true",
+    syncParents: process.env.SYNC_PARENTS === "true",
+    syncStudentEmails: process.env.SYNC_STUDENT_EMAILS === "true"
   },
   blackbaud: {
     oauth: {
@@ -63,6 +66,19 @@ export default {
       whoCanDiscoverGroup:
         process.env.GOOGLE_PARENT_WHO_CAN_DISCOVER_GROUP || "ALL_MEMBERS_CAN_DISCOVER",
       allowExternalMembers: true
+    }
+  },
+  smtp: {
+    reportsEnabled: process.env.SMTP_REPORTS_ENABLED === "true",
+    reportFrequency: process.env.SMTP_REPORT_FREQUENCY,
+    toEmail: process.env.SMTP_TO_EMAIL,
+    sendAsEmail: process.env.SMTP_SEND_AS_EMAIL,
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT, 10) || 587,
+    useTLS: process.env.SMTP_USE_TLS === "true",
+    auth: {
+      username: process.env.SMTP_USERNAME,
+      password: process.env.SMTP_PASSWORD
     }
   }
 };

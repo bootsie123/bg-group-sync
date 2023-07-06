@@ -17,11 +17,27 @@ import environment from "../../environment";
 export const FUNCTION_NAME = "processStudent";
 
 /**
+ * Outlines the object returned by {@link processStudentHandler}
+ */
+export interface ProcessStudentResults {
+  /** The result of the operation. Typically "success", "warn", "error" */
+  status: string;
+  /** An optional message describing the status of the operation */
+  message?: string;
+}
+
+/**
  * Processes the syncing operations required for a singular student
  * @param context The OrchestrationContext passed to the handler
- * @returns True if the student was processed successfully, false if otherwise
+ * @returns The status of the operation in a {@link ProcessParentResults} object
  */
-export function* processStudentHandler(context: df.OrchestrationContext) {
+export function* processStudentHandler(
+  context: df.OrchestrationContext
+): Generator<
+  df.Task,
+  ProcessStudentResults,
+  adminDirectoryV1.Schema$User & adminDirectoryV1.Schema$Group
+> {
   const logger = new Logger(context, "ProcessStudent");
 
   try {
@@ -52,15 +68,21 @@ export function* processStudentHandler(context: df.OrchestrationContext) {
     ) {
       // Create Google account
 
-      logger.log(
+      logger.forceLog(
         Severity.Error,
         `No Google account found for user ${studentFullName}. Skipping Google sync...`
       );
 
-      return true;
+      return {
+        status: "error",
+        message: `No Google account found for user ${studentFullName}`
+      };
     }
 
-    if (student.email.toLowerCase() !== user.primaryEmail.toLowerCase()) {
+    if (
+      environment.sync.syncStudentEmails &&
+      student.email.toLowerCase() !== user.primaryEmail.toLowerCase()
+    ) {
       try {
         yield context.df.callActivity(blackbaudUpdateUserEmail, {
           userId: student.id,
@@ -112,19 +134,19 @@ export function* processStudentHandler(context: df.OrchestrationContext) {
     });
 
     if (member) {
-      logger.log(Severity.Info, `Added ${student.email} to Google Group ${studentGroupName}`);
+      logger.forceLog(Severity.Info, `Added ${student.email} to Google Group ${studentGroupName}`);
     } else {
-      logger.log(
+      logger.forceLog(
         Severity.Info,
         `Student ${student.email} already in Google Group ${studentGroupName}`
       );
     }
 
-    return true;
+    return { status: "success" };
   } catch (err) {
-    logger.log(Severity.Error, "Orchestration Error:", err);
+    logger.forceLog(Severity.Error, "Orchestration Error:", err);
 
-    return false;
+    return { status: "error", message: err };
   }
 }
 

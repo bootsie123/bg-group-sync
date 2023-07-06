@@ -13,24 +13,41 @@ import { genGroupEmail } from "../../utils";
 
 import environment from "../../environment";
 
-export const FUNCTION_NAME = "ProcessParent";
+export const FUNCTION_NAME = "processParent";
+
+/**
+ * Outlines the object returned by {@link processParentHandler}
+ */
+export interface ProcessParentResults {
+  /** The result of the operation. Typically "success", "warn", "error" */
+  status: string;
+  /** An optional message describing the status of the operation */
+  message?: string;
+}
 
 /**
  * Processes the syncing operations required for a singular parent
  * @param context The OrchestrationContext passed to the handler
- * @returns True if the parent was processed successfully, false if otherwise
+ * @returns The status of the operation in a {@link ProcessParentResults} object
  */
-export function* processParentHandler(context: df.OrchestrationContext) {
+export function* processParentHandler(
+  context: df.OrchestrationContext
+): Generator<df.Task, ProcessParentResults, any> {
   const logger = new Logger(context, "ProcessParent");
 
   try {
     const parent: any = context.df.getInput();
 
     if (!parent.email) {
-      return logger.log(
+      logger.forceLog(
         Severity.Warning,
         `No email found for parent ${parent.first_name} ${parent.last_name}. Skipping Google Groups sync...`
       );
+
+      return {
+        status: "warn",
+        message: `No email found for parent ${parent.first_name} ${parent.last_name}`
+      };
     }
 
     const gradYears = new Set<string>();
@@ -85,20 +102,20 @@ export function* processParentHandler(context: df.OrchestrationContext) {
       });
 
       if (member) {
-        logger.log(Severity.Info, `Added ${parent.email} to Google Group ${parentGroupName}`);
+        logger.forceLog(Severity.Info, `Added ${parent.email} to Google Group ${parentGroupName}`);
       } else {
-        logger.log(
+        logger.forceLog(
           Severity.Info,
           `Parent ${parent.email} already in Google Group ${parentGroupName}`
         );
       }
     }
 
-    return true;
+    return { status: "success" };
   } catch (err) {
-    logger.log(Severity.Error, "Orchestration Error:", err);
+    logger.forceLog(Severity.Error, "Orchestration Error:", err);
 
-    return false;
+    return { status: "error", message: err };
   }
 }
 

@@ -1,0 +1,157 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.17.1.54307",
+      "templateHash": "10237814274574943961"
+    }
+  },
+  "parameters": {
+    "appName": {
+      "type": "string",
+      "defaultValue": "bg-group-sync",
+      "metadata": {
+        "description": "The name of the function app that you wish to create"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS"
+      ],
+      "metadata": {
+        "description": "Storage Account type"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources"
+      }
+    },
+    "appInsightsLocation": {
+      "type": "string",
+      "defaultValue": "[parameters('location')]",
+      "metadata": {
+        "description": "Location for Application Insights"
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "defaultValue": "bggroupsync",
+      "metadata": {
+        "description": "Storage account name"
+      }
+    }
+  },
+  "variables": {
+    "copy": [
+      {
+        "name": "defaultSettingsArray",
+        "count": "[length(items(variables('defaultSettings')))]",
+        "input": {
+          "name": "[items(variables('defaultSettings'))[copyIndex('defaultSettingsArray')].key]",
+          "value": "[items(variables('defaultSettings'))[copyIndex('defaultSettingsArray')].value]"
+        }
+      }
+    ],
+    "$fxv#0": {
+      "IsEncrypted": false,
+      "Values": {
+        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "FUNCTIONS_WORKER_RUNTIME": "node",
+        "FUNCTIONS_EXTENSION_VERSION": "~4",
+        "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+        "AzureTaskHub": "bgGroupSync",
+        "SYNC_SCHEDULE": "0 0 0 * * *",
+        "SYNC_SCHEDULE_ENABLED": true,
+        "SYNC_STUDENTS": true,
+        "SYNC_PARENTS": true,
+        "SYNC_STUDENT_EMAILS": false,
+        "BLACKBAUD_OAUTH_ID": "MUST_CHANGE_THIS",
+        "BLACKBAUD_OAUTH_SECRET": "MUST_CHANGE_THIS",
+        "BLACKBAUD_SUBSCRIPTION_KEY": "MUST_CHANGE_THIS",
+        "BLACKBAUD_STUDENT_ROLE": "Student",
+        "BLACKBAUD_PARENT_ROLE": "Parent",
+        "GOOGLE_DOMAIN": "MUST_CHANGE_THIS",
+        "GOOGLE_STUDENT_GROUP_EMAIL_PREFIX": "students",
+        "GOOGLE_STUDENT_GROUP_NAME": "Class of ",
+        "GOOGLE_PARENT_GROUP_EMAIL_PREFIX": "parents",
+        "GOOGLE_PARENT_GROUP_NAME": "Parents of ",
+        "GOOGLE_AUTH_SERVICE_EMAIL": "MUST_CHANGE_THIS",
+        "GOOGLE_AUTH_SERVICE_KEY": "MUST_CHANGE_THIS"
+      }
+    },
+    "defaultSettings": "[variables('$fxv#0').Values]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2022-09-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "kind": "Storage",
+      "properties": {
+        "supportsHttpsTrafficOnly": true,
+        "defaultToOAuthAuthentication": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2022-09-01",
+      "name": "[parameters('appName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic"
+      },
+      "kind": "functionapp",
+      "properties": {
+        "reserved": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2022-09-01",
+      "name": "[parameters('appName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp,linux",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appName'))]",
+        "siteConfig": {
+          "appSettings": "[concat(createArray(createObject('name', 'AzureWebJobsStorage', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-09-01').keys[0].value)), createObject('name', 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-09-01').keys[0].value)), createObject('name', 'WEBSITE_CONTENTSHARE', 'value', toLower(parameters('appName'))), createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', parameters('appName')), '2020-02-02').InstrumentationKey)), filter(variables('defaultSettingsArray'), lambda('setting', not(contains(toObject(createArray(createObject('name', 'AzureWebJobsStorage', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-09-01').keys[0].value)), createObject('name', 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-09-01').keys[0].value)), createObject('name', 'WEBSITE_CONTENTSHARE', 'value', toLower(parameters('appName'))), createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', parameters('appName')), '2020-02-02').InstrumentationKey)), lambda('setting', lambdaVariables('setting').name)), lambdaVariables('setting').name)))))]",
+          "linuxFxVersion": "node|18"
+        },
+        "httpsOnly": true
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', parameters('appName'))]",
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[parameters('appName')]",
+      "location": "[parameters('appInsightsLocation')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "Request_Source": "rest"
+      }
+    }
+  ]
+}

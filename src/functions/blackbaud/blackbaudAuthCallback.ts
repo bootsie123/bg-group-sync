@@ -94,7 +94,7 @@ export async function blackbaudAuthCallbackHandler(
 }
 
 app.http(FUNCTION_NAME, {
-  route: "auth/callback",
+  route: "setup/callback",
   methods: ["GET"],
   authLevel: "anonymous",
   extraInputs: [df.input.durableClient()],

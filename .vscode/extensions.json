@@ -1,3 +1,14 @@
 {
-  "recommendations": ["ms-azuretools.vscode-azurefunctions", "Azurite.azurite"]
+  "recommendations": [
+    "ms-azuretools.vscode-azurefunctions",
+    "azurite.azurite",
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-azureresourcegroups",
+    "formulahendry.azure-storage-explorer",
+    "dbaeumer.vscode-eslint",
+    "ecmel.vscode-html-css",
+    "shd101wyy.markdown-preview-enhanced",
+    "christian-kohler.npm-intellisense",
+    "esbenp.prettier-vscode"
+  ]
 }
