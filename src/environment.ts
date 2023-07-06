@@ -33,28 +33,35 @@ export default {
     studentGroupName: process.env.GOOGLE_STUDENT_GROUP_NAME || "Class of ",
     // See https://developers.google.com/admin-sdk/groups-settings/v1/reference/groups#resource for exact group settings
     studentGroupPermissions: {
-      whoCanAdd: "ALL_MANAGERS_CAN_ADD",
-      whoCanJoin: "INVITED_CAN_JOIN",
-      whoCanViewMembership: "ALL_MANAGERS_CAN_VIEW",
-      whoCanViewGroup: "ALL_MEMBERS_CAN_VIEW",
-      whoCanInvite: "ALL_MANAGERS_CAN_INVITE",
-      whoCanPostMessage: "ALL_IN_DOMAIN_CAN_POST",
-      whoCanLeaveGroup: "ALL_MANAGERS_CAN_LEAVE",
-      whoCanContactOwner: "ALL_MANAGERS_CAN_CONTACT",
-      whoCanDiscoverGroup: "ALL_MEMBERS_CAN_DISCOVER"
+      whoCanAdd: process.env.GOOGLE_STUDENT_WHO_CAN_ADD || "ALL_MANAGERS_CAN_ADD",
+      whoCanJoin: process.env.GOOGLE_STUDENT_WHO_CAN_JOIN || "INVITED_CAN_JOIN",
+      whoCanViewMembership:
+        process.env.GOOGLE_STUDENT_WHO_CAN_VIEW_MEMBERSHIP || "ALL_MANAGERS_CAN_VIEW",
+      whoCanViewGroup: process.env.GOOGLE_STUDENT_WHO_CAN_VIEW_GROUP || "ALL_MEMBERS_CAN_VIEW",
+      whoCanInvite: process.env.GOOGLE_STUDENT_WHO_CAN_INVITE || "ALL_MANAGERS_CAN_INVITE",
+      whoCanPostMessage:
+        process.env.GOOGLE_STUDENT_WHO_CAN_POST_MESSAGE || "ALL_IN_DOMAIN_CAN_POST",
+      whoCanLeaveGroup: process.env.GOOGLE_STUDENT_WHO_CAN_LEAVE_GROUP || "ALL_MANAGERS_CAN_LEAVE",
+      whoCanContactOwner:
+        process.env.GOOGLE_STUDENT_WHO_CAN_CONTACT_OWNER || "ALL_MANAGERS_CAN_CONTACT",
+      whoCanDiscoverGroup:
+        process.env.GOOGLE_STUDENT_WHO_CAN_DISCOVER_GROUP || "ALL_MEMBERS_CAN_DISCOVER"
     },
     parentGroupEmailPrefix: process.env.GOOGLE_PARENT_GROUP_EMAIL_PREFIX || "parents",
     parentGroupName: process.env.GOOGLE_PARENT_GROUP_NAME || "Parents of ",
     parentGroupPermissions: {
-      whoCanAdd: "ALL_MANAGERS_CAN_ADD",
-      whoCanJoin: "INVITED_CAN_JOIN",
-      whoCanViewMembership: "ALL_MANAGERS_CAN_VIEW",
-      whoCanViewGroup: "ALL_MEMBERS_CAN_VIEW",
-      whoCanInvite: "ALL_MANAGERS_CAN_INVITE",
-      whoCanPostMessage: "ANYONE_CAN_POST",
-      whoCanLeaveGroup: "ALL_MEMBERS_CAN_LEAVE",
-      whoCanContactOwner: "ALL_MEMBERS_CAN_CONTACT",
-      whoCanDiscoverGroup: "ALL_MEMBERS_CAN_DISCOVER",
+      whoCanAdd: process.env.GOOGLE_PARENT_WHO_CAN_ADD || "ALL_MANAGERS_CAN_ADD",
+      whoCanJoin: process.env.GOOGLE_PARENT_WHO_CAN_JOIN || "INVITED_CAN_JOIN",
+      whoCanViewMembership:
+        process.env.GOOGLE_PARENT_WHO_CAN_VIEW_MEMBERSHIP || "ALL_MANAGERS_CAN_VIEW",
+      whoCanViewGroup: process.env.GOOGLE_PARENT_WHO_CAN_VIEW_GROUP || "ALL_MEMBERS_CAN_VIEW",
+      whoCanInvite: process.env.GOOGLE_PARENT_WHO_CAN_INVITE || "ALL_MANAGERS_CAN_INVITE",
+      whoCanPostMessage: process.env.GOOGLE_PARENT_WHO_CAN_POST_MESSAGE || "ANYONE_CAN_POST",
+      whoCanLeaveGroup: process.env.GOOGLE_PARENT_WHO_CAN_LEAVE_GROUP || "ALL_MEMBERS_CAN_LEAVE",
+      whoCanContactOwner:
+        process.env.GOOGLE_PARENT_WHO_CAN_CONTACT_OWNER || "ALL_MEMBERS_CAN_CONTACT",
+      whoCanDiscoverGroup:
+        process.env.GOOGLE_PARENT_WHO_CAN_DISCOVER_GROUP || "ALL_MEMBERS_CAN_DISCOVER",
       allowExternalMembers: true
     }
   }
