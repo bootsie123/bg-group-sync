@@ -7,7 +7,8 @@ export default {
     scheduleEnabled: process.env.SYNC_SCHEDULE_ENABLED === "true",
     syncStudents: process.env.SYNC_STUDENTS === "true",
     syncParents: process.env.SYNC_PARENTS === "true",
-    syncStudentEmails: process.env.SYNC_STUDENT_EMAILS === "true"
+    syncStudentEmails: process.env.SYNC_STUDENT_EMAILS === "true",
+    createAccounts: process.env.SYNC_CREATE_ACCOUNTS === "true"
   },
   blackbaud: {
     oauth: {
@@ -32,6 +33,10 @@ export default {
       serviceKey: process.env.GOOGLE_AUTH_SERVICE_KEY
     },
     domain: process.env.GOOGLE_DOMAIN,
+    accountCreationPassword:
+      process.env.GOOGLE_ACCOUNT_CREATION_PASSWORD || "TEMP_PASSWORD_CHANGE_THIS!",
+    accountCreationOrgUnitPath: process.env.GOOGLE_ACCOUNT_CREATION_ORG_UNIT_PATH || "/",
+    accountCreationMinGradYear: parseInt(process.env.GOOGLE_ACCOUNT_CREATION_MIN_GRAD_YEAR, 10),
     studentGroupEmailPrefix: process.env.GOOGLE_STUDENT_GROUP_EMAIL_PREFIX || "students",
     studentGroupName: process.env.GOOGLE_STUDENT_GROUP_NAME || "Class of ",
     // See https://developers.google.com/admin-sdk/groups-settings/v1/reference/groups#resource for exact group settings

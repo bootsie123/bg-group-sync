@@ -7,18 +7,18 @@ import { GoogleAPI } from "../../lib/Google";
 
 import environment from "../../environment";
 
-export const FUNCTION_NAME = "googleFindUser";
+export const FUNCTION_NAME = "googleFindUsers";
 
 /**
- * Finds a user under the Google domain using the given query
- * @param query The query string to use to find the user
+ * Finds multiple users under the Google domain using the given query
+ * @param query The query string to use to find users
  * @param context The invocation context for the function
- * @returns The {@link adminDirectoryV1.Schema$User} user if found, otherwise undefined
+ * @returns A list of {@link adminDirectoryV1.Schema$User} users if found, otherwise undefined
  */
-export async function googleFindUser(
+export async function googleFindUsers(
   query: string,
   context: InvocationContext
-): Promise<adminDirectoryV1.Schema$User> {
+): Promise<adminDirectoryV1.Schema$User[]> {
   const logger = new Logger(context, "Google");
 
   const google = new GoogleAPI();
@@ -26,19 +26,14 @@ export async function googleFindUser(
   try {
     const userList = await google.listUsers({
       domain: environment.google.domain,
-      maxResults: 2,
       query
     });
 
     if (!userList.users) {
       return undefined;
-    } else if (userList.users.length > 1) {
-      logger.log(Severity.Warning, `Multiple Google accounts found with query ${query}`);
-
-      return undefined;
     }
 
-    return userList.users[0];
+    return userList.users;
   } catch (err) {
     logger.log(Severity.Error, err, "\nInput Parameters:", query);
 
@@ -48,5 +43,5 @@ export async function googleFindUser(
 
 df.app.activity(FUNCTION_NAME, {
   extraInputs: [df.input.durableClient()],
-  handler: googleFindUser
+  handler: googleFindUsers
 });

@@ -5,12 +5,15 @@ import { admin_directory_v1 as adminDirectoryV1 } from "googleapis";
 import { Logger, Severity } from "../../lib/Logger";
 
 import { FUNCTION_NAME as googleFindUser } from "../google/googleFindUser";
+import { FUNCTION_NAME as googleFindUsers } from "../google/googleFindUsers";
 import { FUNCTION_NAME as blackbaudUpdateUserEmail } from "../blackbaud/blackbaudUpdateUserEmail";
 import { FUNCTION_NAME as googleFindGroup } from "../google/googleFindGroup";
 import { FUNCTION_NAME as googleAddMemberToGroup } from "../google/googleAddMemberToGroup";
 import { FUNCTION_NAME as googleCreateGroup } from "../google/googleCreateGroup";
+import { FUNCTION_NAME as googleCreateUser } from "../google/googleCreateUser";
+import { FUNCTION_NAME as googleListOrgUnits } from "../google/googleListOrgUnits";
 
-import { genGroupEmail } from "../../utils";
+import { genGroupEmail, genAccountEmail } from "../../utils";
 
 import environment from "../../environment";
 
@@ -36,7 +39,10 @@ export function* processStudentHandler(
 ): Generator<
   df.Task,
   ProcessStudentResults,
-  adminDirectoryV1.Schema$User & adminDirectoryV1.Schema$Group
+  adminDirectoryV1.Schema$User &
+    adminDirectoryV1.Schema$Group &
+    adminDirectoryV1.Schema$User[] &
+    adminDirectoryV1.Schema$OrgUnit[]
 > {
   const logger = new Logger(context, "ProcessStudent");
 
@@ -45,6 +51,8 @@ export function* processStudentHandler(
 
     const studentFullName = student.first_name + " " + student.last_name;
     const gradYear = student.student_info.grad_year;
+    const gradYearNum = parseInt(gradYear, 10);
+    const classOf = environment.google.studentGroupName + " " + gradYear;
 
     const queries = [];
 
@@ -63,20 +71,87 @@ export function* processStudentHandler(
     }
 
     if (
-      !user ||
-      !user?.primaryEmail.toLowerCase().includes(gradYear.substring(gradYear.length - 2))
+      environment.sync.createAccounts &&
+      (!user || !user?.primaryEmail.toLowerCase().includes(gradYear.substring(gradYear.length - 2)))
     ) {
-      // Create Google account
+      if (Number.isNaN(gradYearNum)) {
+        return {
+          status: "error",
+          message: `Unable to parse graduation year ${gradYear} for user ${studentFullName}`
+        };
+      } else if (gradYearNum > environment.google.accountCreationMinGradYear) {
+        logger.forceLog(
+          Severity.Info,
+          `User ${studentFullName} does not meet the minimum graduation year requirement for a Google account. Skipping Google sync...`
+        );
 
-      logger.forceLog(
-        Severity.Error,
-        `No Google account found for user ${studentFullName}. Skipping Google sync...`
+        return {
+          status: "success"
+        };
+      }
+
+      logger.log(
+        Severity.Info,
+        `No Google account found for user ${studentFullName}. Creating new account...`
       );
 
-      return {
-        status: "error",
-        message: `No Google account found for user ${studentFullName}`
+      let newEmail = genAccountEmail(
+        student.first_name,
+        student.last_name,
+        environment.google.domain,
+        gradYear
+      );
+
+      const foundUsers: adminDirectoryV1.Schema$User[] = yield context.df.callActivity(
+        googleFindUsers,
+        `email=${newEmail}`
+      );
+
+      if (foundUsers) {
+        newEmail = genAccountEmail(
+          student.first_name,
+          student.last_name,
+          environment.google.domain,
+          gradYear,
+          "." + foundUsers.length
+        );
+      }
+
+      const orgUnits: adminDirectoryV1.Schema$OrgUnit[] = yield context.df.callActivity(
+        googleListOrgUnits,
+        environment.google.accountCreationOrgUnitPath
+      );
+
+      let orgUnit = orgUnits.find(unit => unit.name === classOf);
+
+      if (!orgUnit) {
+        orgUnit = {
+          orgUnitPath: environment.google.accountCreationOrgUnitPath
+        };
+
+        logger.log(
+          Severity.Warning,
+          `Unable to find organizational unit for user creation of ${studentFullName} (${newEmail} - ${classOf}). Using default organizational unit path...`
+        );
+      }
+
+      const userProfile: adminDirectoryV1.Schema$User = {
+        primaryEmail: newEmail,
+        password: environment.google.accountCreationPassword,
+        changePasswordAtNextLogin: true,
+        name: {
+          givenName: student.first_name,
+          familyName: student.last_name
+        },
+        orgUnitPath: orgUnit.orgUnitPath
       };
+
+      user = yield context.df.callActivity(googleCreateUser, userProfile);
+
+      logger.log(
+        Severity.Info,
+        `Successfully created new Google account for user ${studentFullName} (${newEmail})!`
+      );
     }
 
     if (
@@ -119,7 +194,7 @@ export function* processStudentHandler(
       group = yield context.df.callActivity(googleCreateGroup, {
         groupOptions: {
           email: studentGroupName,
-          name: environment.google.studentGroupName + " " + gradYear,
+          name: classOf,
           description: "Students Class of " + gradYear
         },
         permissionOptions: environment.google.studentGroupPermissions

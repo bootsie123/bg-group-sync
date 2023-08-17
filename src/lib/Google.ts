@@ -16,6 +16,8 @@ const scopes = [
   "https://www.googleapis.com/auth/admin.directory.group.readonly",
   "https://www.googleapis.com/auth/admin.directory.user",
   "https://www.googleapis.com/auth/admin.directory.user.readonly",
+  "https://www.googleapis.com/auth/admin.directory.orgunit",
+  "https://www.googleapis.com/auth/admin.directory.orgunit.readonly",
   "https://www.googleapis.com/auth/apps.groups.settings"
 ];
 
@@ -28,6 +30,9 @@ export class GoogleAPI {
 
   /** The Google GroupsSettings SDK instance */
   private groupsSettings: GroupsSettingsV1.Groupssettings;
+
+  /** The customer ID of the set Google Workspace domain */
+  customerId: Promise<string>;
 
   /**
    * Creates a new instance of the GoogleAPI. Uses environment variables for authentication
@@ -46,6 +51,8 @@ export class GoogleAPI {
     google.options({ auth: googleAuth });
 
     this.groupsSettings = google.groupssettings("v1");
+
+    this.customerId = this.getCustomerId(environment.google.domain);
   }
 
   /**
@@ -185,6 +192,59 @@ export class GoogleAPI {
       return res.data;
     } catch (err) {
       return this.apiErrorHandler(err, this.addMemberToGroup, params, options);
+    }
+  }
+
+  /**
+   * Creates a new user
+   * @param params The parameters containing the user's name, email, and password
+   * @param options Additional options
+   * @returns The newly created {@link adminDirectoryV1.Schema$User} user
+   */
+  async createUser(
+    params: adminDirectoryV1.Params$Resource$Users$Insert,
+    options?: MethodOptions
+  ): Promise<adminDirectoryV1.Schema$User> {
+    try {
+      const res = await this.directory.users.insert(params, options);
+
+      return res.data;
+    } catch (err) {
+      return this.apiErrorHandler(err, this.createUser, params, options);
+    }
+  }
+
+  /**
+   * Retrieves a list of organizational units using the given OrgUnitPath
+   * @param params The parameters to use for the query
+   * @param options Additional options
+   * @returns A list of {@link adminDirectoryV1.Schema$OrgUnits} organizational units matching the query
+   */
+  async listOrgUnits(
+    params: adminDirectoryV1.Params$Resource$Orgunits$List,
+    options?: MethodOptions
+  ): Promise<adminDirectoryV1.Schema$OrgUnits> {
+    try {
+      const res = await this.directory.orgunits.list(params, options);
+
+      return res.data;
+    } catch (err) {
+      return this.apiErrorHandler(err, this.listOrgUnits, params, options);
+    }
+  }
+
+  /**
+   * Retrieves the customer ID for the given Google Workspace domain
+   * @param domain The Google Workspace domain containing the customer ID
+   * @returns The customer ID for the domain
+   */
+  async getCustomerId(domain: string): Promise<string> {
+    try {
+      const res = await this.directory.users.list({ domain });
+
+      return res.data.users[0].customerId;
+    } catch (err) {
+      return this.apiErrorHandler(err, this.getCustomerId);
     }
   }
 }
