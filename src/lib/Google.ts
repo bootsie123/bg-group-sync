@@ -64,13 +64,19 @@ export class GoogleAPI {
    * @returns A comma seperated list of error messages
    */
   private async apiErrorHandler(error: GaxiosError, retry?, ...params) {
-    const data = error.response.data;
+    let errors = [];
 
-    let errors = data.error.errors.map(error => error.message);
+    if (error?.response?.data) {
+      const data = error.response.data;
 
-    errors = errors.join(",");
+      errors = data.error.errors.map(error => error.message);
+    } else {
+      errors = [error?.message || error?.toString() || error];
+    }
 
-    if (errors.includes("Request rate higher than configured")) {
+    const errorsText = errors.join(",");
+
+    if (errorsText.includes("Request rate higher than configured")) {
       await new Promise(resolve => setTimeout(resolve, 3000));
 
       if (retry) {
@@ -78,7 +84,7 @@ export class GoogleAPI {
       }
     }
 
-    throw errors;
+    throw errorsText;
   }
 
   /**

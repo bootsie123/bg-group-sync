@@ -159,12 +159,18 @@ export class BlackbaudAPI {
    * @returns A comma seperated list of error messages
    */
   private apiErrorHandler(error: AxiosError): string {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = error.response.data;
+    let errors = [];
 
-    const errors = data.errors
-      ? data.errors.map(err => (err.message ? err.message : err.raw_message))
-      : [data.message];
+    if (error?.response?.data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data: any = error.response.data;
+
+      errors = data.errors
+        ? data.errors.map(err => (err.message ? err.message : err.raw_message))
+        : [data.message];
+    } else {
+      errors = [error?.message || error?.toString() || error];
+    }
 
     return errors.join(",");
   }

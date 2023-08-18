@@ -118,7 +118,7 @@ export function* syncUsersHandler(
 
     return {
       role: roleName,
-      errors: [err?.message || err]
+      errors: [err?.message || err?.toString() || err]
     };
   }
 }
