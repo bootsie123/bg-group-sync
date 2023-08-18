@@ -76,7 +76,7 @@ export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
 
       if (
         environment.smtp.reportsEnabled &&
-        ((reportFrequency === "on-error" && (hasErrors || hasWarnings)) ||
+        ((reportFrequency === "on-error" && hasErrors) ||
           (reportFrequency === "on-warning" && hasWarnings) ||
           reportFrequency === "always")
       ) {
