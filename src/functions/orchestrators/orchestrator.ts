@@ -52,8 +52,8 @@ export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
       let hasWarnings = false;
 
       for (const result of results) {
-        if (result.errors) hasErrors = true;
-        if (result.warnings) hasWarnings = true;
+        if (result?.errors?.length > 0) hasErrors = true;
+        if (result?.warnings?.length > 0) hasWarnings = true;
 
         let logMessage = `\nSync Results:\n-------------\nRole: ${result.role}\n`;
 
