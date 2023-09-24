@@ -56,10 +56,10 @@ export function* syncUsersHandler(
 
   const params: syncUsersHandlerParams = context.df.getInput();
 
-  const roleName = params.blackbaudRole.toLowerCase();
+  const roleName = params.blackbaudRole;
 
   try {
-    const users = yield context.df.callActivity(blackbaudGetUsers, params.blackbaudRole);
+    const users: any[] = yield context.df.callActivity(blackbaudGetUsers, params.blackbaudRole);
 
     if (users.length < 1) {
       logger.log(Severity.Warning, `No ${roleName}s found. Skipping sync to Google Groups`);
@@ -80,7 +80,11 @@ export function* syncUsersHandler(
 
     logger.log(Severity.Info, `Syncing ${tasks.length} ${roleName}s with Google Groups...`);
 
-    const results: ProcessResults[] = yield context.df.Task.all(tasks);
+    let results: ProcessResults[] = [];
+
+    if (tasks.length > 0) {
+      results = yield context.df.Task.all(tasks);
+    }
 
     let succeeded = 0;
 

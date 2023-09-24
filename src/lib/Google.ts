@@ -202,6 +202,25 @@ export class GoogleAPI {
   }
 
   /**
+   * Removes a member from the specified group
+   * @param params The parameters containing the group ID and member to remove
+   * @param options Additional options
+   * @returns A message containing the status of the operation
+   */
+  async removeMemberFromGroup(
+    params: adminDirectoryV1.Params$Resource$Members$Delete,
+    options?: MethodOptions
+  ): Promise<any> {
+    try {
+      const res = await this.directory.members.delete(params, options);
+
+      return res.data;
+    } catch (err) {
+      return this.apiErrorHandler(err, this.removeMemberFromGroup, params, options);
+    }
+  }
+
+  /**
    * Creates a new user
    * @param params The parameters containing the user's name, email, and password
    * @param options Additional options

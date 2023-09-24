@@ -8,6 +8,8 @@ import { FUNCTION_NAME as blackbaudGetUser } from "../blackbaud/blackbaudGetUser
 import { FUNCTION_NAME as googleFindGroup } from "../google/googleFindGroup";
 import { FUNCTION_NAME as googleCreateGroup } from "../google/googleCreateGroup";
 import { FUNCTION_NAME as googleAddMemberToGroup } from "../google/googleAddMemberToGroup";
+import { FUNCTION_NAME as googleRemoveMemberFromGroup } from "../google/googleRemoveMemberFromGroup";
+import { FUNCTION_NAME as googleFindGroups } from "../google/googleFindGroups";
 
 import { genGroupEmail } from "../../utils";
 
@@ -60,10 +62,54 @@ export function* processParentHandler(
           role => role.name === environment.blackbaud.sync.studentRole
         );
 
-        if (roles.length > 0) {
+        if (roles.length < 1) continue;
+
+        if (user.student_info.grad_year === null) {
+          logger.forceLog(
+            Severity.Warning,
+            `Graduation year missing for student ${user.first_name} ${user.last_name} with parent ${parent.first_name} ${parent.last_name}`
+          );
+        } else {
           gradYears.add(user.student_info.grad_year);
         }
       }
+    }
+
+    const groups: adminDirectoryV1.Schema$Group[] = yield context.df.callActivity(
+      googleFindGroups,
+      {
+        query: `name:${environment.google.parentGroupName.trim().replaceAll(" ", "+")}*`
+      }
+    );
+
+    const gradYearsArray = Array.from(gradYears);
+
+    const removalTasks = [];
+
+    for (const group of groups || []) {
+      if (gradYearsArray.some(year => group.name.includes(year))) continue;
+
+      removalTasks.push(
+        context.df.callActivity(googleRemoveMemberFromGroup, {
+          groupId: group.id,
+          email: parent.email
+        })
+      );
+    }
+
+    if (removalTasks.length > 0) {
+      try {
+        yield context.df.Task.all(removalTasks);
+      } catch (err) {
+        logger.log(
+          Severity.Warning,
+          `Unable to remove parent ${parent.email} from groups. Continuing with sync...`
+        );
+      }
+    }
+
+    if (!parent.roles.some(role => role.name === environment.blackbaud.sync.parentRole)) {
+      return { status: "success" };
     }
 
     for (const gradYear of gradYears) {

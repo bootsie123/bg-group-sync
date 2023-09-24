@@ -43,6 +43,13 @@ export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
           processor: processParent
         })
       );
+
+      tasks.push(
+        context.df.callSubOrchestrator(syncUsers, {
+          blackbaudRole: environment.blackbaud.sync.pastParentRole,
+          processor: processParent
+        })
+      );
     }
 
     if (tasks.length > 0) {

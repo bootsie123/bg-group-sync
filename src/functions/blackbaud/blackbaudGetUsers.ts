@@ -32,7 +32,7 @@ export async function blackbaudGetUsers(
 
     const roles = (await blackbaud.getRoles()).value;
 
-    const userRole = roles.find(role => role.name == userRoleName);
+    const userRole = roles.find(role => role.name === userRoleName);
 
     if (!userRole) {
       logger.log(Severity.Error, `Unable to find role of name ${userRoleName}`);

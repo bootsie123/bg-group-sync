@@ -15,6 +15,7 @@ Google Groups offers a convient way to have mailing and distribution lists for t
 - Individual control over whether to sync parents and/or students
 - Automatic creation of missing Google Groups (including auto naming and setting of default permissions)
 - Automatic creation of missing student Google Accounts
+- Automatic removal of past parents from Google Groups
 - Automatic updating of student emails in Blackbaud (matches a students email in Blackbaud with their email found in the Google domain)
 - Sync job reports via email
 - Built to be hosted using Azure Functions (free plan)
@@ -136,6 +137,7 @@ _Note: The settings in bold are required. Refer to their corresponding configura
 | **BLACKBAUD_SUBSCRIPTION_KEY**         | String  |                            | The primary access key of your Blackbaud SKY API subscription                                                                                                                                                                                                          |
 | BLACKBAUD_STUDENT_ROLE                 | String  | Student                    | The Blackbaud role used when searching for students to sync to Google Groups                                                                                                                                                                                           |
 | BLACKBAUD_PARENT_ROLE                  | String  | Parent                     | The Blackbaud role used when searching for parents to sync to Google Groups                                                                                                                                                                                            |
+| BLACKBAUD_PAST_PARENT_ROLE | String | Parent of Past Student | An additional Blackbaud role used when searching for parents to remove from Google Groups |
 | **GOOGLE_DOMAIN**                      | String  |                            | The FQDN of your Google Workspace organization                                                                                                                                                                                                                         |
 | GOOGLE_ACCOUNT_CREATION_PASSWORD       | String  | TEMP_PASSWORD_CHANGE_THIS! | The default password used when creating Google accounts                                                                                                                                                                                                                |
 | GOOGLE_ACCOUNT_CREATION_ORG_UNIT_PATH  | String  | /Students                  | The default Organizational Unit (OU) path to search for OU's following the GOOGLE_STUDENT_GROUP_NAME naming convention. By default, accounts are put into this OU if a sub OU with the correct name cannot be found                                                    |

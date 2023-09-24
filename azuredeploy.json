@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.17.1.54307",
-      "templateHash": "12708229036174630440"
+      "version": "0.21.1.54444",
+      "templateHash": "4048911328218616693"
     }
   },
   "parameters": {
@@ -80,6 +80,7 @@
         "BLACKBAUD_SUBSCRIPTION_KEY": "MUST_CHANGE_THIS",
         "BLACKBAUD_STUDENT_ROLE": "Student",
         "BLACKBAUD_PARENT_ROLE": "Parent",
+        "BLACKBAUD_PAST_PARENT_ROLE": "Parent of Past Student",
         "GOOGLE_DOMAIN": "MUST_CHANGE_THIS",
         "GOOGLE_ACCOUNT_CREATION_PASSWORD": "TEMP_PASSWORD_CHANGE_THIS!",
         "GOOGLE_ACCOUNT_CREATION_ORG_UNIT_PATH": "/Students",
