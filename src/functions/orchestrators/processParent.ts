@@ -95,6 +95,11 @@ export function* processParentHandler(
           email: parent.email
         })
       );
+
+      logger.log(
+        Severity.Info,
+        `Removing parent ${parent.email} from Google Group ${group.name}...`
+      );
     }
 
     if (removalTasks.length > 0) {
