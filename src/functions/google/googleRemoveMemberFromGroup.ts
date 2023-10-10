@@ -39,6 +39,7 @@ export async function googleRemoveMemberFromGroup(
     return true;
   } catch (err) {
     if (err?.includes("Resource Not Found: memberKey")) return true;
+    if (err?.includes("Missing required field: memberKey")) return true;
 
     logger.log(Severity.Error, err, "\nInput Parameters:", params);
 

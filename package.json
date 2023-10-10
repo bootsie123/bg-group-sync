@@ -1,6 +1,6 @@
 {
   "name": "bg-group-sync",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "An automated tool to sync parents and students in Blackbaud to Google Groups",
   "main": "dist/functions/**/*.js",
   "scripts": {

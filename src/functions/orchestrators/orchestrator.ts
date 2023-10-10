@@ -44,12 +44,16 @@ export function* syncOrchestrationHandler(context: df.OrchestrationContext) {
         })
       );
 
-      tasks.push(
-        context.df.callSubOrchestrator(syncUsers, {
-          blackbaudRole: environment.blackbaud.sync.pastParentRole,
-          processor: processParent
-        })
-      );
+      const pastParentRoles = environment.blackbaud.sync.pastParentRoles.split(",").map(role => role.trim());
+
+      for (const role of pastParentRoles) {
+        tasks.push(
+          context.df.callSubOrchestrator(syncUsers, {
+            blackbaudRole: role,
+            processor: processParent
+          })
+        );
+      }
     }
 
     if (tasks.length > 0) {

@@ -25,7 +25,8 @@ export default {
     sync: {
       studentRole: process.env.BLACKBAUD_STUDENT_ROLE || "Student",
       parentRole: process.env.BLACKBAUD_PARENT_ROLE || "Parent",
-      pastParentRole: process.env.BLACKBAUD_PAST_PARENT_ROLE || "Parent of Past Student"
+      pastParentRoles:
+        process.env.BLACKBAUD_PAST_PARENT_ROLES || "Parent of Past Student, Parent of Alumni"
     }
   },
   google: {
