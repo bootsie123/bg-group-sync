@@ -164,7 +164,7 @@ export function* processStudentHandler(
           email: user.primaryEmail
         });
 
-        logger.log(Severity.Info, `Updated Blackbuad email for user ${studentFullName}`);
+        logger.log(Severity.Info, `Updated Blackbaud email for user ${studentFullName}`);
       } catch (err) {
         logger.log(
           Severity.Warning,
